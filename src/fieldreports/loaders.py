@@ -29,8 +29,13 @@ def file_sha256(path: Path) -> str:
 
 
 def discover(folder: Path) -> list[Path]:
-    """Supported files in a folder, sorted by name so runs are reproducible."""
-    return sorted(p for p in Path(folder).iterdir() if p.suffix.lower() in SUPPORTED)
+    """Supported files in a folder, in case-sensitive name order on every OS.
+
+    Order matters: when two files report the same day, the first one loads and the second goes
+    to review. ``sorted(paths)`` would ignore case on Windows only, so sort on the name string.
+    """
+    files = [p for p in Path(folder).iterdir() if p.suffix.lower() in SUPPORTED]
+    return sorted(files, key=lambda p: p.name)
 
 
 def load(path: Path) -> SourceDoc:

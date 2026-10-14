@@ -6,7 +6,8 @@ from fieldreports.loaders import discover, file_sha256, load, load_text
 def test_discover_finds_every_supported_file_in_name_order():
     files = discover(RAW)
     assert len(files) == 32
-    assert files == sorted(files)
+    assert [f.name for f in files] == sorted(f.name for f in files)
+    assert files[0].name.startswith("DR_")  # uppercase sorts first, on Windows too
     assert {f.suffix for f in files} == {".txt", ".eml", ".pdf"}
 
 

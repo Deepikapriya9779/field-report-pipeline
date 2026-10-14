@@ -1,4 +1,5 @@
 import json
+import socket
 from pathlib import Path
 
 import pytest
@@ -9,6 +10,19 @@ from fieldreports.schema import ReportFields
 ROOT = Path(__file__).resolve().parents[1]
 RAW = ROOT / "data" / "raw"
 GOLD = ROOT / "data" / "gold"
+
+
+@pytest.fixture(autouse=True)
+def no_network(monkeypatch):
+    """Tests never hit the network: no API key, mock mode, and sockets refuse to connect."""
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.setenv("LLM_MODE", "mock")
+
+    def refuse(*args, **kwargs):
+        raise RuntimeError("tests must not open network connections")
+
+    monkeypatch.setattr(socket.socket, "connect", refuse)
+    monkeypatch.setattr(socket, "create_connection", refuse)
 
 
 @pytest.fixture(scope="session")

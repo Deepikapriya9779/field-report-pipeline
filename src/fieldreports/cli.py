@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from rich.console import Console
 from rich.table import Table
 
-from fieldreports import __version__, db, queries
+from fieldreports import __version__, db, llm, queries
 from fieldreports.ingest import ingest_folder
 from fieldreports.pipeline import Status
 from fieldreports.roster import DEFAULT_ROSTER, Roster
@@ -59,10 +59,32 @@ def ingest(
     folder: Annotated[Path, typer.Argument(exists=True, file_okay=False)],
     db_path: DbOption = Path("fieldreports.db"),
     roster_path: Annotated[Path, typer.Option("--roster")] = DEFAULT_ROSTER,
+    rules_only: Annotated[
+        bool, typer.Option("--rules-only", help="Skip the LLM; free-form reports stay pending.")
+    ] = False,
 ) -> None:
-    """Load every report in FOLDER. Files already ingested are skipped."""
+    """Load every report in FOLDER. Files already ingested are skipped.
+
+    LLM mode comes from LLM_MODE (mock | record | live); without an API key it is mock,
+    which replays recorded responses and fails if one is missing.
+    """
+    roster = Roster.load(roster_path)
+    extractor = None
+    if not rules_only:
+        try:
+            mode = llm.resolve_mode()
+        except ValueError as exc:
+            raise typer.BadParameter(str(exc), param_hint="LLM_MODE") from exc
+        extractor = llm.build_extractor(roster, mode)
+        console.print(f"[dim]LLM: {extractor.model}, mode={mode}[/]")
+
     conn = db.connect(db_path)
-    result = ingest_folder(conn, folder, Roster.load(roster_path), today=date.today())
+    try:
+        result = ingest_folder(conn, folder, roster, today=date.today(), llm=extractor)
+    except llm.FixtureError as exc:
+        console.print(f"[red]Stopped:[/] {exc}")
+        console.print("[dim]Files processed before this one are saved; re-running is safe.[/]")
+        raise typer.Exit(1) from exc
 
     table = Table("file", "status", "method", "conf", "reason")
     style = {Status.LOADED: "green", Status.REVIEW: "yellow", Status.PENDING: "dim"}
@@ -79,8 +101,19 @@ def ingest(
     )
     if result.count(Status.PENDING):
         console.print(
-            "[dim]pending = not the DR-1 template; needs the LLM extractor, which is not "
-            "built yet. Pending files are not recorded and will be picked up on a later run.[/]"
+            "[dim]pending = not the DR-1 template and the LLM was skipped (--rules-only). "
+            "Pending files are not recorded and will be picked up on a later run.[/]"
+        )
+    if extractor and extractor.usage:
+        calls = extractor.usage
+        tokens_in = sum(u.get("input_tokens", 0) for u in calls)
+        tokens_out = sum(u.get("output_tokens", 0) for u in calls)
+        costs = [llm.cost_usd(u["model"], u) for u in calls]
+        cost = f", ${sum(costs):.4f}" if None not in costs else ""
+        note = " (replayed from fixtures, nothing billed)" if mode is llm.LLMMode.MOCK else ""
+        console.print(
+            f"[dim]LLM calls {len(calls)}: {tokens_in:,} input + {tokens_out:,} output "
+            f"tokens{cost}{note}[/]"
         )
 
 
