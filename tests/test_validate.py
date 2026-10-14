@@ -136,3 +136,30 @@ def test_empty_text_layer_is_caught():
 )
 def test_no_real_report_is_flagged_as_garbled(path):
     assert text_problem(load(path).text) is None
+
+
+def test_template_safety_heading_alone_is_not_a_safety_line(clean):
+    from fieldreports.validate import safety_lines
+
+    report, text = clean
+    assert "SAFETY" in text and safety_lines(text) == []
+    assert _check(report, text).confidence == 1.0
+
+
+def test_dropped_safety_event_sends_the_report_to_review(clean):
+    """Recall check: confidence can't see a fact the extractor dropped, so count safety lines."""
+    report, text = clean
+    text += "\nsafety obs: ladder missing a foot found on l2; tagged out and removed\n"
+    verdict = _check(report, text)
+    assert verdict.confidence == 0.75
+    assert (
+        "1 safety-related line(s) in the text but 0 safety event(s) extracted"
+        in (verdict.reasons[0])
+    )
+
+
+def test_extracted_safety_event_satisfies_the_recall_check(clean):
+    report, text = clean
+    text += "\nnear miss: grid bundle slid off lift deck, no injury\n"
+    report.safety_events = [{"type": "near_miss", "description": "grid bundle slid off lift"}]
+    assert _check(report, text).accepted

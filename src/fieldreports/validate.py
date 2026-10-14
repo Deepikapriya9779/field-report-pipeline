@@ -28,9 +28,17 @@ PENALTY_UNGROUNDED_NUMBER = 0.15
 PENALTY_RETRY = 0.10
 PENALTY_UNKNOWN_COMPANY = 0.10
 PENALTY_NO_MANPOWER = 0.30
+PENALTY_UNEXTRACTED_SAFETY = 0.25  # one is enough for review: a missed recordable costs more
 
 _NUMBER = re.compile(r"\d+(?:\.\d+)?")
 _WORDLIKE = re.compile(r"^[(\[]?[A-Za-z]+(?:['/&.-][A-Za-z0-9]+)*[)\].,;:]*$")
+# Words that put a line on the safety record. Deliberately broad: a false alarm costs a minute
+# of review; a dropped near miss or recordable is a gap in the safety record.
+_SAFETY_WORDS = re.compile(
+    r"\b(safety|near[ _-]?miss|first[ _-]?aid|recordable|injur\w*|osha|tagged[ -]?out|"
+    r"lock[ -]?out|incident)\b",
+    re.IGNORECASE,
+)
 
 
 @dataclass
@@ -75,6 +83,16 @@ def validate(
             penalties.append((PENALTY_UNKNOWN_COMPANY, f"{name} not on roster"))
     if not report.manpower:
         penalties.append((PENALTY_NO_MANPOWER, "no manpower listed"))
+    lines = safety_lines(source_text)
+    missing = len(lines) - len(report.safety_events)
+    if missing > 0:
+        penalties.append(
+            (
+                PENALTY_UNEXTRACTED_SAFETY * missing,
+                f"{len(lines)} safety-related line(s) in the text but "
+                f"{len(report.safety_events)} safety event(s) extracted, e.g. {lines[0][:60]!r}",
+            )
+        )
 
     confidence = round(max(0.0, 1.0 - sum(p for p, _ in penalties)), 2)
     if confidence < REVIEW_THRESHOLD:
@@ -89,6 +107,16 @@ def validate(
             f"{weather_delays:g} hrs of weather delays listed"
         )
     return Verdict(confidence=confidence, reasons=reasons, warnings=warnings)
+
+
+def safety_lines(text: str) -> list[str]:
+    """Lines that mention a safety event. A recall check: confidence (a precision check on
+    numbers) can't see a fact the extractor dropped, so count what should be there."""
+    return [
+        line.strip()
+        for line in text.splitlines()
+        if _SAFETY_WORDS.search(line) and line.strip().upper() != "SAFETY"  # template heading
+    ]
 
 
 def _hard_failures(report: ReportFields, unknown_names: list[str], today: date) -> list[str]:

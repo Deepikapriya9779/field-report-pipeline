@@ -287,8 +287,11 @@ def test_full_folder_replays_from_recorded_fixtures(tmp_path, roster):
     extractor = llm.build_extractor(roster, llm.LLMMode.MOCK)
     conn = db.connect(tmp_path / "replay.db")
     result = ingest_folder(conn, RAW, roster, today=date(2026, 10, 14), llm=extractor)
-    assert (result.count(Status.LOADED), result.count(Status.REVIEW)) == (30, 2)
+    assert (result.count(Status.LOADED), result.count(Status.REVIEW)) == (29, 3)
     assert len(extractor.usage) == 11  # one call per free-form report, no retries
+    # The extract-v1 recording dropped the 9/25 safety observation; the recall check catches it.
+    [caught] = [o for o in result.outcomes if o.doc.path.name == "daily 9-25.txt"]
+    assert "safety-related line" in caught.reasons[0]
     assert {u["model"] for u in extractor.usage} == {"claude-sonnet-5-5"}
 
 
