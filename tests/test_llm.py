@@ -279,3 +279,14 @@ def test_cost_uses_per_million_token_prices():
     # 3000*$2 + 900*$10 + 2000*$0.20, per million tokens
     assert llm.cost_usd("claude-sonnet-5-5", usage) == pytest.approx(0.0154)
     assert llm.cost_usd("some-unpriced-model", usage) is None
+
+
+def test_full_folder_replays_from_recorded_fixtures(tmp_path, roster):
+    """The committed fixtures are real recordings (LLM_MODE=record). Replaying them must load
+    every working day with no network, the same way the record run did."""
+    extractor = llm.build_extractor(roster, llm.LLMMode.MOCK)
+    conn = db.connect(tmp_path / "replay.db")
+    result = ingest_folder(conn, RAW, roster, today=date(2026, 10, 14), llm=extractor)
+    assert (result.count(Status.LOADED), result.count(Status.REVIEW)) == (30, 2)
+    assert len(extractor.usage) == 11  # one call per free-form report, no retries
+    assert {u["model"] for u in extractor.usage} == {"claude-sonnet-5-5"}

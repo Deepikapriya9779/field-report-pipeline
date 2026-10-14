@@ -1,0 +1,536 @@
+{
+  "request_sha256": "e69e7bb0d57a64ed1d937f86027ce0c29461bee450e7c2a0f14f793db2ce87c3",
+  "input_sha256": "da281262fc33f391de9d73e4894948373a2ca51f19da03f5e9a349035077fed7",
+  "prompt_version": "extract-v1",
+  "model": "claude-sonnet-5-5",
+  "served_by": "claude-sonnet-5-5",
+  "recorded_at": "2026-10-14T17:13:28+00:00",
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 2896,
+    "inference_geo": "global",
+    "input_tokens": 506,
+    "iterations": [
+      {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 2896,
+        "input_tokens": 506,
+        "model": null,
+        "output_tokens": 927,
+        "type": "message"
+      }
+    ],
+    "output_tokens": 927,
+    "output_tokens_details": {
+      "thinking_tokens": 0
+    },
+    "service_tier": "standard"
+  },
+  "request": {
+    "model": "claude-sonnet-5-5",
+    "max_tokens": 16000,
+    "system": [
+      {
+        "type": "text",
+        "text": "You extract construction superintendent daily reports into structured data for a general contractor. Read the report and call the record_daily_report tool exactly once. Do not answer in text.\n\nProject: Harbor Point Medical Office Building\nGeneral contractor: Bayline Builders\nSuperintendents: Dana Okafor, Marcus Reyes\nSubcontractors on this job (company, trade):\n- Bayline Builders (self-perform) (laborers)\n- Keystone Interiors LLC (drywall)\n- Volt Line Electric, Inc. (electrical)\n- Tidewater Mechanical (hvac)\n- Clearwater Plumbing Co. (plumbing)\n- Redline Fire Protection (fire_sprinkler)\n- Summit Roofing & Sheet Metal (roofing)\n- Glassline Curtainwall (curtain_wall)\n- Gravel & Grade Sitework (sitework)\nTrades: curtain_wall, drywall, electrical, fire_sprinkler, hvac, laborers, plumbing, roofing, sitework\n\nRules:\n- Record only what the report states. Never invent a value. If the project, report date or superintendent is not stated, use null.\n- report_date is the day the work happened, as the superintendent wrote it (body or subject line). Two-digit years are 20xx. Never use an email's send time.\n- Superintendent and companies: use the full names above when the text clearly refers to them by name, nickname or trade word (\"elec\", \"framers\", \"summit roofers\"). If a company is not on the list, copy its name as written. Trade must be one of the trades above.\n- manpower.hours is hours worked PER WORKER, not crew total. If the report states a default shift (\"all crews 8 hrs unless noted\"), apply it to every crew without its own hours.\n- delays: one entry per stoppage. hours = clock hours of work lost as stated. Causes: weather; rfi (waiting on an RFI answer; set rfi_no); material (late, short or wrong deliveries); inspection (waiting on or rescheduled inspections); owner_change (owner directives, ASIs, change orders); labor (crew shortages or crews pulled off); equipment (breakdowns); other.\n- weather.weather_delay_hours = hours lost to weather (0 if none). When weather stopped work, also list it in delays with cause weather.\n- safety_events types: near_miss (no injury, could have been one); first_aid (minor care on site); recordable (OSHA recordable: treatment beyond first aid, such as prescription medication, or lost time); observation (unsafe act or condition noted or corrected).\n- inspections result: pass, fail or partial.\n- Keep descriptions short and in the superintendent's words. notes = anything else worth keeping that fits no other field, otherwise \"\".",
+        "cache_control": {
+          "type": "ephemeral"
+        }
+      }
+    ],
+    "tools": [
+      {
+        "name": "record_daily_report",
+        "description": "Record the structured contents of one superintendent daily report.",
+        "strict": true,
+        "input_schema": {
+          "$defs": {
+            "Delay": {
+              "additionalProperties": false,
+              "properties": {
+                "cause": {
+                  "$ref": "#/$defs/DelayCause"
+                },
+                "hours": {
+                  "description": "Clock hours of stoppage as reported (not crew-hours).",
+                  "type": "number"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "rfi_no": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "RFI number when cause is rfi."
+                }
+              },
+              "required": [
+                "cause",
+                "hours",
+                "description"
+              ],
+              "type": "object"
+            },
+            "DelayCause": {
+              "enum": [
+                "weather",
+                "rfi",
+                "material",
+                "inspection",
+                "owner_change",
+                "labor",
+                "equipment",
+                "other"
+              ],
+              "type": "string"
+            },
+            "Delivery": {
+              "additionalProperties": false,
+              "properties": {
+                "supplier": {
+                  "type": "string"
+                },
+                "material": {
+                  "type": "string"
+                },
+                "notes": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "supplier",
+                "material"
+              ],
+              "type": "object"
+            },
+            "Inspection": {
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "description": "What was inspected, e.g. 'Above-ceiling L1'.",
+                  "type": "string"
+                },
+                "inspector_agency": {
+                  "description": "Who inspected, e.g. city building dept.",
+                  "type": "string"
+                },
+                "result": {
+                  "$ref": "#/$defs/InspectionResult"
+                },
+                "notes": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "inspector_agency",
+                "result"
+              ],
+              "type": "object"
+            },
+            "InspectionResult": {
+              "enum": [
+                "pass",
+                "fail",
+                "partial"
+              ],
+              "type": "string"
+            },
+            "ManpowerEntry": {
+              "additionalProperties": false,
+              "properties": {
+                "company": {
+                  "description": "Subcontractor or self-perform crew name.",
+                  "type": "string"
+                },
+                "trade": {
+                  "description": "Trade, e.g. drywall, electrical, hvac.",
+                  "type": "string"
+                },
+                "headcount": {
+                  "description": "Workers on site from this company.",
+                  "type": "integer"
+                },
+                "hours": {
+                  "description": "Hours worked PER WORKER (shift length), not total.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "company",
+                "trade",
+                "headcount",
+                "hours"
+              ],
+              "type": "object"
+            },
+            "SafetyEvent": {
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "$ref": "#/$defs/SafetyType"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "description"
+              ],
+              "type": "object"
+            },
+            "SafetyType": {
+              "enum": [
+                "near_miss",
+                "first_aid",
+                "recordable",
+                "observation"
+              ],
+              "type": "string"
+            },
+            "Weather": {
+              "additionalProperties": false,
+              "properties": {
+                "conditions": {
+                  "description": "Short description, e.g. 'Heavy rain' or 'Clear'.",
+                  "type": "string"
+                },
+                "temp_high_f": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "Daily high, degrees F."
+                },
+                "temp_low_f": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "Daily low, degrees F."
+                },
+                "weather_delay_hours": {
+                  "description": "Hours of work lost to weather, as reported. 0 if none.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "conditions"
+              ],
+              "type": "object"
+            },
+            "WorkItem": {
+              "additionalProperties": false,
+              "properties": {
+                "area": {
+                  "description": "Location, e.g. 'L2 east corridor' or 'Roof'.",
+                  "type": "string"
+                },
+                "trade": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "area",
+                "trade",
+                "description"
+              ],
+              "type": "object"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Everything an extractor reads out of the report text.",
+          "properties": {
+            "project": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Project name as written. Null if not stated."
+            },
+            "report_date": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Date the work happened (YYYY-MM-DD). Null if the report doesn't state it."
+            },
+            "superintendent": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Who wrote the report. Null if not stated."
+            },
+            "weather": {
+              "$ref": "#/$defs/Weather"
+            },
+            "manpower": {
+              "items": {
+                "$ref": "#/$defs/ManpowerEntry"
+              },
+              "type": "array"
+            },
+            "work_completed": {
+              "items": {
+                "$ref": "#/$defs/WorkItem"
+              },
+              "type": "array"
+            },
+            "delays": {
+              "items": {
+                "$ref": "#/$defs/Delay"
+              },
+              "type": "array"
+            },
+            "safety_events": {
+              "items": {
+                "$ref": "#/$defs/SafetyEvent"
+              },
+              "type": "array"
+            },
+            "inspections": {
+              "items": {
+                "$ref": "#/$defs/Inspection"
+              },
+              "type": "array"
+            },
+            "deliveries": {
+              "items": {
+                "$ref": "#/$defs/Delivery"
+              },
+              "type": "array"
+            },
+            "visitors": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "notes": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "project",
+            "report_date",
+            "superintendent",
+            "weather"
+          ],
+          "type": "object"
+        }
+      }
+    ],
+    "tool_choice": {
+      "type": "auto"
+    },
+    "output_config": {
+      "effort": "low"
+    },
+    "messages": [
+      {
+        "role": "user",
+        "content": "<report>\nFrom: Marcus Reyes <mreyes@bayline.example>\nTo: Tom Alvarez <talvarez@bayline.example>\nSubject: Daily - Harbor Pt MOB - 9/4/26\n\nTom,\n\ndaily below.\n\nHP MOB daily 9/4/26\nMarcus R.\n\nall crews 7-3:30 (8 hrs) unless noted\nwx: overcast, hi 85 lo 70\n\nmanpower:\ngc labor x3\nframers x7\nelectricians - 6\ntidewater x4\nclearwater - 4\nredline fp - 3\nsummit roofers - 5\ng&g site 5 guys\n\ndone today:\n- roof: installed membrane on main roof Main roof\n- elec: set boxes and ran mc cable in exam rooms L2 east\n- plumb: roughed in restroom core waste and vent L1 east\n- labor: cleaned l1 and l2, loaded dumpster L1 west\n- mech: hung main supply duct L1 east\n\nissues:\n- boom lift would not start; roofers waited on mechanic (1.5 hrs lost)\ndelivered: wire and mc cable, 14 reels from Summit Electrical Supply\nvisitors: Priya Sethi (Linework Architects)\n\n-M\n</report>\n\nExtract this report with record_daily_report."
+      }
+    ],
+    "betas": [
+      "server-side-fallback-2026-07-01"
+    ],
+    "fallbacks": "default"
+  },
+  "response": {
+    "id": "msg_011Cg2WCYKCxquabrxGX836y",
+    "container": null,
+    "content": [
+      {
+        "id": "toolu_0176fmackaAzoKozqMWavN7B",
+        "input": {
+          "project": "Harbor Point Medical Office Building",
+          "report_date": "2026-09-04",
+          "superintendent": "Marcus Reyes",
+          "weather": {
+            "conditions": "Overcast",
+            "temp_high_f": 85,
+            "temp_low_f": 70,
+            "weather_delay_hours": 0
+          },
+          "manpower": [
+            {
+              "company": "Bayline Builders (self-perform)",
+              "trade": "laborers",
+              "headcount": 3,
+              "hours": 8
+            },
+            {
+              "company": "Keystone Interiors LLC",
+              "trade": "drywall",
+              "headcount": 7,
+              "hours": 8
+            },
+            {
+              "company": "Volt Line Electric, Inc.",
+              "trade": "electrical",
+              "headcount": 6,
+              "hours": 8
+            },
+            {
+              "company": "Tidewater Mechanical",
+              "trade": "hvac",
+              "headcount": 4,
+              "hours": 8
+            },
+            {
+              "company": "Clearwater Plumbing Co.",
+              "trade": "plumbing",
+              "headcount": 4,
+              "hours": 8
+            },
+            {
+              "company": "Redline Fire Protection",
+              "trade": "fire_sprinkler",
+              "headcount": 3,
+              "hours": 8
+            },
+            {
+              "company": "Summit Roofing & Sheet Metal",
+              "trade": "roofing",
+              "headcount": 5,
+              "hours": 8
+            },
+            {
+              "company": "Gravel & Grade Sitework",
+              "trade": "sitework",
+              "headcount": 5,
+              "hours": 8
+            }
+          ],
+          "work_completed": [
+            {
+              "area": "Main roof",
+              "trade": "roofing",
+              "description": "Installed membrane on main roof"
+            },
+            {
+              "area": "L2 east",
+              "trade": "electrical",
+              "description": "Set boxes and ran MC cable in exam rooms"
+            },
+            {
+              "area": "L1 east",
+              "trade": "plumbing",
+              "description": "Roughed in restroom core waste and vent"
+            },
+            {
+              "area": "L1 and L2; L1 west",
+              "trade": "laborers",
+              "description": "Cleaned L1 and L2, loaded dumpster"
+            },
+            {
+              "area": "L1 east",
+              "trade": "hvac",
+              "description": "Hung main supply duct"
+            }
+          ],
+          "delays": [
+            {
+              "cause": "equipment",
+              "hours": 1.5,
+              "description": "Boom lift would not start; roofers waited on mechanic"
+            }
+          ],
+          "deliveries": [
+            {
+              "supplier": "Summit Electrical Supply",
+              "material": "Wire and MC cable",
+              "notes": "14 reels"
+            }
+          ],
+          "visitors": [
+            "Priya Sethi (Linework Architects)"
+          ],
+          "notes": ""
+        },
+        "name": "record_daily_report",
+        "type": "tool_use",
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ],
+    "diagnostics": null,
+    "model": "claude-sonnet-5-5",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 2896,
+      "inference_geo": "global",
+      "input_tokens": 506,
+      "iterations": [
+        {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 2896,
+          "input_tokens": 506,
+          "model": null,
+          "output_tokens": 927,
+          "type": "message"
+        }
+      ],
+      "output_tokens": 927,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "service_tier": "standard"
+    }
+  }
+}
