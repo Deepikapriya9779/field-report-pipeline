@@ -1,0 +1,6 @@
+# Same bytes on every OS. File hashes drive idempotent ingest and LLM fixture lookup,
+# so a CRLF checkout on Windows must not change them.
+* text=auto eol=lf
+data/raw/** -text
+tests/fixtures/** -text
+*.pdf binary

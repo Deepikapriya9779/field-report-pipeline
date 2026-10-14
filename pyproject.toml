@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "field-report-pipeline"
+version = "0.1.0"
+description = "Turns superintendent daily reports into structured, queryable data and a weekly summary."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "Deepika Priya Kuntilla" }]
+dependencies = [
+    "pydantic>=2.6",
+    "typer>=0.12",
+    "rich>=13",
+    "pdfplumber>=0.11",
+    "pyyaml>=6",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "ruff>=0.6",
+    "fpdf2>=2.7",  # only used by scripts/generate_reports.py to render the sample PDFs
+]
+
+[project.scripts]
+fieldreports = "fieldreports.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fieldreports"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["SIM300"]  # constant-on-the-left reads fine in asserts
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
