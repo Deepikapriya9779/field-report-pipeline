@@ -18,6 +18,7 @@ from fieldreports import __version__, db, llm, queries
 from fieldreports.ingest import ingest_folder
 from fieldreports.pipeline import Status
 from fieldreports.roster import DEFAULT_ROSTER, Roster
+from fieldreports.weekly import build_weekly
 
 load_dotenv()
 app = typer.Typer(help="Superintendent daily reports -> structured data.", no_args_is_help=True)
@@ -175,3 +176,34 @@ def review(db_path: DbOption = Path("fieldreports.db")) -> None:
         reasons = "\n".join(json.loads(row["reasons"]))
         table.add_row(os.path.basename(row["path"]), reasons, row["queued_at"])
     console.print(table)
+
+
+@app.command()
+def weekly(
+    week: Annotated[
+        datetime, typer.Option("--week", formats=["%Y-%m-%d"], help="Monday that starts the week.")
+    ],
+    out: Annotated[Path | None, typer.Option("--out", help="Markdown file to write.")] = None,
+    no_llm: Annotated[bool, typer.Option("--no-llm", help="Use the template summary.")] = False,
+    db_path: DbOption = Path("fieldreports.db"),
+    roster_path: Annotated[Path, typer.Option("--roster")] = DEFAULT_ROSTER,
+) -> None:
+    """Write the weekly summary: tables from SQL, one LLM-written paragraph on top."""
+    wk = _week(week)
+    narrator = None
+    if not no_llm:
+        try:
+            narrator = llm.build_narrator(llm.resolve_mode())
+        except ValueError as exc:
+            raise typer.BadParameter(str(exc), param_hint="LLM_MODE") from exc
+    try:
+        markdown, source = build_weekly(
+            db.connect(db_path), wk, Roster.load(roster_path).project, narrator
+        )
+    except llm.FixtureError as exc:
+        console.print(f"[red]Stopped:[/] {exc}  (or use --no-llm for the template summary)")
+        raise typer.Exit(1) from exc
+    target = out or Path(f"weekly_{wk.isoformat()}.md")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(markdown, encoding="utf-8", newline="\n")
+    console.print(f"wrote {target} (summary paragraph: {source})")

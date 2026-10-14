@@ -45,7 +45,7 @@ class ScriptedTransport:
         self.responses = list(responses)
         self.requests = []
 
-    def create(self, params, *, input_sha256):
+    def create(self, params, *, input_sha256, prompt_version):
         self.requests.append(json.loads(json.dumps(params)))  # snapshot
         return self.responses.pop(0)
 
@@ -290,3 +290,18 @@ def test_full_folder_replays_from_recorded_fixtures(tmp_path, roster):
     assert (result.count(Status.LOADED), result.count(Status.REVIEW)) == (30, 2)
     assert len(extractor.usage) == 11  # one call per free-form report, no retries
     assert {u["model"] for u in extractor.usage} == {"claude-sonnet-5-5"}
+
+
+def test_record_mode_only_pays_for_requests_without_a_fixture(tmp_path, roster):
+    store = llm.FixtureStore(tmp_path)
+    first = llm.RecordingTransport(ScriptedTransport(tool_call(GOOD_INPUT)), store)
+    llm.ClaudeExtractor(first, roster).extract(TEXT)
+    assert first.api_calls == 1
+
+    again = llm.RecordingTransport(ScriptedTransport(), store)  # would fail if called
+    assert llm.ClaudeExtractor(again, roster).extract(TEXT).report is not None
+    assert again.api_calls == 0
+
+    refresh = llm.RecordingTransport(ScriptedTransport(tool_call(GOOD_INPUT)), store, refresh=True)
+    llm.ClaudeExtractor(refresh, roster).extract(TEXT)
+    assert refresh.api_calls == 1

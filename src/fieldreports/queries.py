@@ -81,6 +81,74 @@ FROM review_queue
 ORDER BY queued_at, path
 """
 
+# -- line-item listings for the weekly report ------------------------------------------------
+
+DAILY_LOG = """
+SELECT r.report_date,
+       r.superintendent,
+       r.extraction_method,
+       r.weather_conditions,
+       r.temp_high_f,
+       r.temp_low_f,
+       r.weather_delay_hours,
+       COALESCE(SUM(m.headcount), 0)            AS headcount,
+       COALESCE(SUM(m.headcount * m.hours), 0)  AS man_hours
+FROM reports r
+LEFT JOIN manpower m ON m.report_id = r.id
+WHERE r.report_date BETWEEN :start AND :end
+GROUP BY r.id
+ORDER BY r.report_date
+"""
+
+DELAY_EVENTS = """
+SELECT r.report_date, d.cause, d.hours, d.rfi_no, d.description
+FROM delays d
+JOIN reports r ON r.id = d.report_id
+WHERE r.report_date BETWEEN :start AND :end
+ORDER BY r.report_date, d.hours DESC
+"""
+
+SAFETY_EVENTS = """
+SELECT r.report_date, s.type, s.description
+FROM safety_events s
+JOIN reports r ON r.id = s.report_id
+WHERE r.report_date BETWEEN :start AND :end
+ORDER BY r.report_date
+"""
+
+INSPECTIONS = """
+SELECT r.report_date, i.type, i.inspector_agency, i.result, i.notes
+FROM inspections i
+JOIN reports r ON r.id = i.report_id
+WHERE r.report_date BETWEEN :start AND :end
+ORDER BY r.report_date
+"""
+
+DELIVERIES = """
+SELECT r.report_date, d.supplier, d.material, d.notes
+FROM deliveries d
+JOIN reports r ON r.id = d.report_id
+WHERE r.report_date BETWEEN :start AND :end
+ORDER BY r.report_date
+"""
+
+VISITORS = """
+SELECT r.report_date, v.name
+FROM visitors v
+JOIN reports r ON r.id = v.report_id
+WHERE r.report_date BETWEEN :start AND :end
+ORDER BY r.report_date
+"""
+
+LISTINGS = {
+    "daily_log": DAILY_LOG,
+    "delay_events": DELAY_EVENTS,
+    "safety_events": SAFETY_EVENTS,
+    "inspections": INSPECTIONS,
+    "deliveries": DELIVERIES,
+    "visitors": VISITORS,
+}
+
 
 def week_range(week_start: date) -> tuple[str, str]:
     """Monday through Sunday, so a Saturday make-up day counts in its own week."""
@@ -105,6 +173,10 @@ def delays(conn: sqlite3.Connection, by: str, week: date | None = None) -> list[
         if "rfis" in row:  # GROUP_CONCAT order is unspecified; make it stable
             row["rfis"] = ", ".join(sorted(row["rfis"].split(","), key=int)) if row["rfis"] else ""
     return rows
+
+
+def listing(conn: sqlite3.Connection, name: str, week: date) -> list[dict]:
+    return _run(conn, LISTINGS[name], week)
 
 
 def review_queue(conn: sqlite3.Connection) -> list[dict]:

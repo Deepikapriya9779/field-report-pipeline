@@ -167,9 +167,10 @@ def cost_usd(model: str, usage: dict) -> float | None:
 
 
 class Transport(Protocol):
-    def create(self, params: dict, *, input_sha256: str) -> dict:
+    def create(self, params: dict, *, input_sha256: str, prompt_version: str) -> dict:
         """Return the Messages API response as a plain dict. ``input_sha256`` identifies the
-        report text, so a missing fixture can be told apart from a stale one."""
+        input (report text or weekly facts) so a missing fixture can be told apart from a
+        stale one; ``prompt_version`` is stored with recorded fixtures."""
         ...
 
 
@@ -183,7 +184,7 @@ class AnthropicTransport:
             client = anthropic.Anthropic()
         self.client = client
 
-    def create(self, params: dict, *, input_sha256: str) -> dict:
+    def create(self, params: dict, *, input_sha256: str, prompt_version: str) -> dict:
         return self.client.beta.messages.create(**params).to_dict(mode="json")
 
 
@@ -194,12 +195,14 @@ class FixtureStore:
     def path(self, key: str) -> Path:
         return self.directory / f"{key}.json"
 
-    def save(self, key: str, params: dict, response: dict, input_sha256: str) -> None:
+    def save(
+        self, key: str, params: dict, response: dict, input_sha256: str, prompt_version: str
+    ) -> None:
         self.directory.mkdir(parents=True, exist_ok=True)
         fixture = {
             "request_sha256": key,
             "input_sha256": input_sha256,
-            "prompt_version": PROMPT_VERSION,
+            "prompt_version": prompt_version,
             "model": params["model"],
             "served_by": response.get("model"),
             "recorded_at": datetime.now(UTC).isoformat(timespec="seconds"),
@@ -211,30 +214,30 @@ class FixtureStore:
             json.dumps(fixture, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n"
         )
 
-    def load(self, key: str, params: dict, input_sha256: str) -> dict:
+    def load(self, key: str, params: dict, input_sha256: str, prompt_version: str) -> dict:
         path = self.path(key)
         if not path.exists():
-            raise FixtureError(self._missing_message(params, input_sha256))
+            raise FixtureError(self._missing_message(params, input_sha256, prompt_version))
         fixture = json.loads(path.read_text(encoding="utf-8"))
         if fixture.get("request_sha256") != key or request_key(fixture["request"]) != key:
             raise FixtureError(f"fixture {path.name} does not match its request (edited by hand?). "
                                "Delete it and re-record with LLM_MODE=record.")  # fmt: skip
         return fixture["response"]
 
-    def _missing_message(self, params: dict, input_sha256: str) -> str:
+    def _missing_message(self, params: dict, input_sha256: str, prompt_version: str) -> str:
         stale = [f for f in self._all() if f.get("input_sha256") == input_sha256]
         hint = "No recorded LLM response for this request."
         if stale:
             old = stale[0]
             hint = (
-                "Stale fixture: this report was recorded with model "
+                "Stale fixture: this input was recorded with model "
                 f"{old.get('model')} and prompt {old.get('prompt_version')}, but the current "
-                f"request uses model {params['model']} and prompt {PROMPT_VERSION} (or the "
+                f"request uses model {params['model']} and prompt {prompt_version} (or the "
                 "prompt/schema text changed)."
             )
         return (
-            f"{hint} Mock mode never invents a response. Set ANTHROPIC_API_KEY and re-record: "
-            "LLM_MODE=record fieldreports ingest data/raw"
+            f"{hint} Mock mode never invents a response. Set ANTHROPIC_API_KEY and run the "
+            "same command with LLM_MODE=record."
         )
 
     def _all(self) -> list[dict]:
@@ -244,14 +247,26 @@ class FixtureStore:
 
 
 class RecordingTransport:
-    """``record`` mode: call the API, then save the response as a fixture."""
+    """``record`` mode: call the API and save the response as a fixture.
 
-    def __init__(self, inner: Transport, store: FixtureStore):
-        self.inner, self.store = inner, store
+    A request that already has a fixture is replayed instead of paid for again, so a record
+    session only fills the gaps and earlier recordings stay stable. ``refresh=True``
+    (``LLM_RECORD_REFRESH=1``) re-records everything it touches.
+    """
 
-    def create(self, params: dict, *, input_sha256: str) -> dict:
-        response = self.inner.create(params, input_sha256=input_sha256)
-        self.store.save(request_key(params), params, response, input_sha256)
+    def __init__(self, inner: Transport, store: FixtureStore, refresh: bool = False):
+        self.inner, self.store, self.refresh = inner, store, refresh
+        self.api_calls = 0
+
+    def create(self, params: dict, *, input_sha256: str, prompt_version: str) -> dict:
+        key = request_key(params)
+        if not self.refresh and self.store.path(key).exists():
+            return self.store.load(key, params, input_sha256, prompt_version)
+        response = self.inner.create(
+            params, input_sha256=input_sha256, prompt_version=prompt_version
+        )
+        self.api_calls += 1
+        self.store.save(key, params, response, input_sha256, prompt_version)
         return response
 
 
@@ -261,8 +276,8 @@ class ReplayTransport:
     def __init__(self, store: FixtureStore):
         self.store = store
 
-    def create(self, params: dict, *, input_sha256: str) -> dict:
-        return self.store.load(request_key(params), params, input_sha256)
+    def create(self, params: dict, *, input_sha256: str, prompt_version: str) -> dict:
+        return self.store.load(request_key(params), params, input_sha256, prompt_version)
 
 
 # -- the extractor -----------------------------------------------------------------------------
@@ -293,7 +308,9 @@ class ClaudeExtractor:
         return params
 
     def _call(self, params: dict, input_sha256: str) -> dict:
-        response = self.transport.create(params, input_sha256=input_sha256)
+        response = self.transport.create(
+            params, input_sha256=input_sha256, prompt_version=PROMPT_VERSION
+        )
         self.usage.append({"model": response.get("model", self.model), **response.get("usage", {})})
         return response
 
@@ -356,6 +373,65 @@ def _feedback(calls: list[dict], error: str) -> dict:
     }
 
 
+# -- weekly narrative --------------------------------------------------------------------------
+
+NARRATIVE_PROMPT_VERSION = "weekly-v1"
+NARRATIVE_SYSTEM = """\
+You write the one-paragraph summary at the top of a general contractor's weekly field report. \
+The reader is the project manager.
+
+Use only the facts in the JSON you are given. Every number you write must appear in those facts \
+exactly as given: do not add, subtract, average or convert anything yourself. Write 3 to 5 \
+sentences of plain prose, with no heading, list or markdown. Lead with what a project manager acts \
+on: lost time and its causes (name RFI numbers), failed inspections and safety events. Then cover \
+manpower. Do not speculate about schedule impact or anything not in the facts."""
+
+
+@dataclass(frozen=True)
+class Narrative:
+    text: str | None
+    error: str | None = None
+
+
+class ClaudeNarrator:
+    """Writes the weekly paragraph from numbers that SQL already computed."""
+
+    def __init__(self, transport: Transport, model: str = DEFAULT_MODEL):
+        self.transport, self.model = transport, model
+        self.usage: list[dict] = []
+
+    def write(self, facts: dict) -> Narrative:
+        facts_json = json.dumps(facts, sort_keys=True, indent=1)
+        params = {
+            "model": self.model,
+            "max_tokens": MAX_TOKENS,
+            "system": NARRATIVE_SYSTEM,
+            "output_config": {"effort": EFFORT},
+            "messages": [
+                {
+                    "role": "user",
+                    "content": f"<week_facts>\n{facts_json}\n</week_facts>\n\n"
+                    "Write the summary paragraph.",
+                }
+            ],
+        }
+        if self.model in FALLBACK_MODELS:
+            params["betas"] = [FALLBACK_BETA]
+            params["fallbacks"] = "default"
+        response = self.transport.create(
+            params,
+            input_sha256=hashlib.sha256(facts_json.encode("utf-8")).hexdigest(),
+            prompt_version=NARRATIVE_PROMPT_VERSION,
+        )
+        self.usage.append({"model": response.get("model", self.model), **response.get("usage", {})})
+        if response.get("stop_reason") in {"refusal", "max_tokens"}:
+            return Narrative(None, f"model stopped with {response['stop_reason']}")
+        text = " ".join(
+            b["text"].strip() for b in response.get("content", []) if b.get("type") == "text"
+        ).strip()
+        return Narrative(text or None, None if text else "model returned no text")
+
+
 # -- wiring ------------------------------------------------------------------------------------
 
 
@@ -374,14 +450,23 @@ def resolve_mode(env: dict[str, str] | None = None) -> LLMMode:
     return mode
 
 
-def build_extractor(roster: Roster, mode: LLMMode, model: str | None = None) -> ClaudeExtractor:
-    model = model or os.environ.get("ANTHROPIC_MODEL") or DEFAULT_MODEL
+def build_transport(mode: LLMMode) -> Transport:
     store = FixtureStore()
-    transport: Transport
     if mode is LLMMode.MOCK:
-        transport = ReplayTransport(store)
-    elif mode is LLMMode.RECORD:
-        transport = RecordingTransport(AnthropicTransport(), store)
-    else:
-        transport = AnthropicTransport()
-    return ClaudeExtractor(transport, roster, model)
+        return ReplayTransport(store)
+    if mode is LLMMode.RECORD:
+        refresh = os.environ.get("LLM_RECORD_REFRESH") == "1"
+        return RecordingTransport(AnthropicTransport(), store, refresh=refresh)
+    return AnthropicTransport()
+
+
+def configured_model(model: str | None = None) -> str:
+    return model or os.environ.get("ANTHROPIC_MODEL") or DEFAULT_MODEL
+
+
+def build_extractor(roster: Roster, mode: LLMMode, model: str | None = None) -> ClaudeExtractor:
+    return ClaudeExtractor(build_transport(mode), roster, configured_model(model))
+
+
+def build_narrator(mode: LLMMode, model: str | None = None) -> ClaudeNarrator:
+    return ClaudeNarrator(build_transport(mode), configured_model(model))
