@@ -15,6 +15,7 @@ from rich.console import Console
 from rich.table import Table
 
 from fieldreports import __version__, db, llm, queries
+from fieldreports.evaluate import evaluate, render_results, total
 from fieldreports.ingest import ingest_folder
 from fieldreports.pipeline import Status
 from fieldreports.roster import DEFAULT_ROSTER, Roster
@@ -207,3 +208,46 @@ def weekly(
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(markdown, encoding="utf-8", newline="\n")
     console.print(f"wrote {target} (summary paragraph: {source})")
+
+
+@app.command("eval")
+def eval_cmd(
+    live: Annotated[bool, typer.Option("--live", help="Call the API; save nothing.")] = False,
+    record: Annotated[
+        bool, typer.Option("--record", help="Call the API for requests not yet recorded.")
+    ] = False,
+    out: Annotated[Path, typer.Option("--out")] = Path("eval/results.md"),
+    roster_path: Annotated[Path, typer.Option("--roster")] = DEFAULT_ROSTER,
+) -> None:
+    """Score rules, LLM and pipeline extraction against the gold reports.
+
+    Runs on recorded responses (mock) unless --live or --record is given, so the numbers are
+    reproducible and CI never calls the API.
+    """
+    if live and record:
+        raise typer.BadParameter("pick one of --live and --record")
+    wanted = "live" if live else "record" if record else "mock"
+    try:
+        mode = llm.resolve_mode({**os.environ, "LLM_MODE": wanted})
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+
+    roster = Roster.load(roster_path)
+    extractor = llm.build_extractor(roster, mode)
+    try:
+        run = evaluate(extractor, roster)
+    except llm.FixtureError as exc:
+        console.print(f"[red]Stopped:[/] {exc} For the eval: fieldreports eval --record")
+        raise typer.Exit(1) from exc
+    run.mode = mode.value
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(render_results(run), encoding="utf-8", newline="\n")
+
+    table = Table("method", "reports", "precision", "recall", "F1", title="Field-level scores")
+    for method, scores in run.scores.items():
+        c = total(scores)
+        table.add_row(
+            method, str(len(scores)), f"{c.precision:.3f}", f"{c.recall:.3f}", f"{c.f1:.3f}"
+        )
+    console.print(table)
+    console.print(f"wrote {out}")
