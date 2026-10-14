@@ -269,17 +269,28 @@ def evaluate(
         "llm": lambda text: extractor.extract(text).report,
         "pipeline": lambda text: extract(text, extractor).report,
     }
+    scores, usage = {}, {}
+    for m in methods:
+        before = len(extractor.usage)
+        scores[m] = run(predictors[m], gold, roster)
+        usage[m] = extractor.usage[before:]
     return EvalRun(
         model=extractor.model,
         mode="",
         template=[src for src, text, _ in gold if is_template(text)],
-        scores={m: run(predictors[m], gold, roster) for m in methods},
-        usage=extractor.usage,
+        scores=scores,
+        # "pipeline" repeats the LLM method's free-form requests, so cost one method's calls
+        usage=usage.get("llm") or usage.get("pipeline") or [],
     )
 
 
 def _pct(x: float) -> str:
     return f"{x:.3f}"
+
+
+def _f1_or_na(c: Counts) -> str:
+    """n/a when neither side has a fact in this section (nothing to get right or wrong)."""
+    return _pct(c.f1) if c.tp + c.fp + c.fn else "n/a"
 
 
 def render_results(ev: EvalRun) -> str:
@@ -358,7 +369,7 @@ def render_results(ev: EvalRun) -> str:
         tpl = {m: [s for s in ev.scores[m] if s.source in ev.template] for m in ("rules", "llm")}
         for section in SECTIONS:
             r, m = total(tpl["rules"], section), total(tpl["llm"], section)
-            lines.append(f"| {section} | {_pct(r.f1)} | {_pct(m.f1)} |")
+            lines.append(f"| {section} | {_f1_or_na(r)} | {_f1_or_na(m)} |")
 
     errors_method = "llm" if "llm" in ev.scores else main
     lines += ["", f"## Every {label[errors_method]} error", ""]
@@ -383,7 +394,8 @@ def render_results(ev: EvalRun) -> str:
         tokens_out = sum(u.get("output_tokens", 0) for u in ev.usage)
         lines += ["", "## Cost", ""]
         lines.append(
-            f"{calls} LLM calls, {tokens_in:,} input tokens (including cached) and "
+            f"{calls} LLM extraction calls (one per gold report the LLM read), "
+            f"{tokens_in:,} input tokens (including cached) and "
             f"{tokens_out:,} output tokens"
             + (
                 f": ${sum(costs):.4f}, about ${sum(costs) / calls:.4f} per call."

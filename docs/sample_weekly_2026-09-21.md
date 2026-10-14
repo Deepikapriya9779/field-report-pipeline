@@ -4,9 +4,9 @@
 
 ## Summary
 
-6 daily reports logged 1,730 man-hours across 8 companies, led by Keystone Interiors LLC with 392. Reported delays totaled 16 hours (weather 12, owner change 2, RFI 2). 2 of 2 inspections passed.
+The week lost 16 hours to delays: 12 hours to weather (heavy rain on 2026-09-22 and rain until 11 AM on 2026-09-23, which stopped roofing and curtain wall), 2 hours to owner directive ASI-07 relocating the exam room 214 wall (drywall held on L2 east), and 2 hours waiting on a response to RFI 14 (sprinkler head layout at the L3 lobby ceiling). Both inspections passed, firestopping on L1 penetrations and above-ceiling on L1 east, and the one safety item was an observation, a ladder missing a foot found on L2 that was tagged out and removed. Across 6 daily reports the crew logged 1,730 man-hours with a peak headcount of 47. Keystone Interiors (drywall) put in the most hours at 392, followed by Volt Line Electric at 312, and Saturday 2026-09-26 was a light day with a headcount of 13.
 
-_Template summary built from the tables below._
+_Written by claude-sonnet-5-5 from the tables below; every number in it was checked against them._
 
 ## Man-hours by company
 
@@ -54,7 +54,9 @@ Delay hours are clock hours of stoppage as each superintendent reported them, no
 
 ## Safety
 
-No safety events reported.
+| Day | Type | Description |
+|---|---|---|
+| Fri Sep 25 | observation | ladder missing a foot found on L2; tagged out and removed |
 
 ## Inspections
 
@@ -68,7 +70,7 @@ No safety events reported.
 | Day | Supplier | Material | Notes |
 |---|---|---|---|
 | Mon Sep 21 | Summit Electrical Supply | Main switchgear MSB-1 | Set in L1 electrical room with forklift |
-| Fri Sep 25 | Coastal Gypsum Supply | 5/8 in. type X gypsum board | 8 bunks |
+| Fri Sep 25 | Coastal Gypsum Supply | 5/8 in. type X gypsum board, 8 bunks |  |
 
 ## Visitors
 

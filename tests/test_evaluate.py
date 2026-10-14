@@ -86,19 +86,22 @@ def test_section_totals_add_up_to_the_overall_total():
 
 
 def test_eval_on_recorded_fixtures_is_deterministic(roster):
-    """Rules + pipeline only use fixtures recorded for ingest. Known results:
-    rules are exact on templates; the LLM missed the 9/25 safety observation."""
+    """All three methods replay recorded responses (prompt extract-v2). Known results: rules
+    and the LLM are both exact on the template reports; the LLM missed the 9/11 first aid."""
     extractor = llm.build_extractor(roster, llm.LLMMode.MOCK)
-    run = evaluate(extractor, roster, ("rules", "pipeline"))
-    rules_on_templates = [s for s in run.scores["rules"] if s.source in run.template]
-    assert len(rules_on_templates) == 5
-    assert total(rules_on_templates).f1 == 1.0
+    run = evaluate(extractor, roster)
+    templates = {m: [s for s in run.scores[m] if s.source in run.template] for m in run.scores}
+    assert len(templates["rules"]) == 5
+    assert total(templates["rules"]).f1 == 1.0
+    assert total(templates["llm"]).f1 == 1.0
 
-    errors = {s.source: s.errors for s in run.scores["pipeline"]}
-    assert any("safety_events: missed item" in e for e in errors["daily 9-25.txt"])
-    pipeline = total(run.scores["pipeline"])
-    assert pipeline.f1 > 0.95
+    errors = {s.source: s.errors for s in run.scores["llm"]}
+    assert any("safety_events: missed item" in e for e in errors["daily 9-11.txt"])
+    assert not any("safety_events" in e for e in errors["daily 9-25.txt"])
+    assert total(run.scores["pipeline"]).f1 > 0.95
+    assert len(run.usage) == 12  # one LLM call per gold report, not double-counted
 
     run.mode = "mock"
     markdown = render_results(run)
     assert "| Rules | template (5) | 1.000 | 1.000 | 1.000 |" in markdown
+    assert "| visitors | n/a | n/a |" in markdown

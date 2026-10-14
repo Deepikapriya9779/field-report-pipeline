@@ -1,17 +1,17 @@
 {
-  "request_sha256": "873b25bf919ddc8d9be3b085ae02377d734105f82cbfdf9d700c76efc23fb737",
+  "request_sha256": "05f151d624c102ba834367b0008594068a9ae6764345b9d45a68aa51d9ded301",
   "input_sha256": "d26fb466278c1bc103515ae3791030bb8c5c3cb6f2caa90ff1107c2097b1c162",
-  "prompt_version": "extract-v1",
+  "prompt_version": "extract-v2",
   "model": "claude-sonnet-5-5",
   "served_by": "claude-sonnet-5-5",
-  "recorded_at": "2026-10-14T17:13:58+00:00",
+  "recorded_at": "2026-10-14T17:40:48+00:00",
   "usage": {
     "cache_creation": {
       "ephemeral_1h_input_tokens": 0,
       "ephemeral_5m_input_tokens": 0
     },
     "cache_creation_input_tokens": 0,
-    "cache_read_input_tokens": 2896,
+    "cache_read_input_tokens": 3026,
     "inference_geo": "global",
     "input_tokens": 406,
     "iterations": [
@@ -21,7 +21,7 @@
           "ephemeral_5m_input_tokens": 0
         },
         "cache_creation_input_tokens": 0,
-        "cache_read_input_tokens": 2896,
+        "cache_read_input_tokens": 3026,
         "input_tokens": 406,
         "model": null,
         "output_tokens": 884,
@@ -40,7 +40,7 @@
     "system": [
       {
         "type": "text",
-        "text": "You extract construction superintendent daily reports into structured data for a general contractor. Read the report and call the record_daily_report tool exactly once. Do not answer in text.\n\nProject: Harbor Point Medical Office Building\nGeneral contractor: Bayline Builders\nSuperintendents: Dana Okafor, Marcus Reyes\nSubcontractors on this job (company, trade):\n- Bayline Builders (self-perform) (laborers)\n- Keystone Interiors LLC (drywall)\n- Volt Line Electric, Inc. (electrical)\n- Tidewater Mechanical (hvac)\n- Clearwater Plumbing Co. (plumbing)\n- Redline Fire Protection (fire_sprinkler)\n- Summit Roofing & Sheet Metal (roofing)\n- Glassline Curtainwall (curtain_wall)\n- Gravel & Grade Sitework (sitework)\nTrades: curtain_wall, drywall, electrical, fire_sprinkler, hvac, laborers, plumbing, roofing, sitework\n\nRules:\n- Record only what the report states. Never invent a value. If the project, report date or superintendent is not stated, use null.\n- report_date is the day the work happened, as the superintendent wrote it (body or subject line). Two-digit years are 20xx. Never use an email's send time.\n- Superintendent and companies: use the full names above when the text clearly refers to them by name, nickname or trade word (\"elec\", \"framers\", \"summit roofers\"). If a company is not on the list, copy its name as written. Trade must be one of the trades above.\n- manpower.hours is hours worked PER WORKER, not crew total. If the report states a default shift (\"all crews 8 hrs unless noted\"), apply it to every crew without its own hours.\n- delays: one entry per stoppage. hours = clock hours of work lost as stated. Causes: weather; rfi (waiting on an RFI answer; set rfi_no); material (late, short or wrong deliveries); inspection (waiting on or rescheduled inspections); owner_change (owner directives, ASIs, change orders); labor (crew shortages or crews pulled off); equipment (breakdowns); other.\n- weather.weather_delay_hours = hours lost to weather (0 if none). When weather stopped work, also list it in delays with cause weather.\n- safety_events types: near_miss (no injury, could have been one); first_aid (minor care on site); recordable (OSHA recordable: treatment beyond first aid, such as prescription medication, or lost time); observation (unsafe act or condition noted or corrected).\n- inspections result: pass, fail or partial.\n- Keep descriptions short and in the superintendent's words. notes = anything else worth keeping that fits no other field, otherwise \"\".",
+        "text": "You extract construction superintendent daily reports into structured data for a general contractor. Read the report and call the record_daily_report tool exactly once. Do not answer in text.\n\nProject: Harbor Point Medical Office Building\nGeneral contractor: Bayline Builders\nSuperintendents: Dana Okafor, Marcus Reyes\nSubcontractors on this job (company, trade):\n- Bayline Builders (self-perform) (laborers)\n- Keystone Interiors LLC (drywall)\n- Volt Line Electric, Inc. (electrical)\n- Tidewater Mechanical (hvac)\n- Clearwater Plumbing Co. (plumbing)\n- Redline Fire Protection (fire_sprinkler)\n- Summit Roofing & Sheet Metal (roofing)\n- Glassline Curtainwall (curtain_wall)\n- Gravel & Grade Sitework (sitework)\nTrades: curtain_wall, drywall, electrical, fire_sprinkler, hvac, laborers, plumbing, roofing, sitework\n\nRules:\n- Record only what the report states. Never invent a value. If the project, report date or superintendent is not stated, use null.\n- report_date is the day the work happened, as the superintendent wrote it (body or subject line). Two-digit years are 20xx. Never use an email's send time.\n- Superintendent and companies: use the full names above when the text clearly refers to them by name, nickname or trade word (\"elec\", \"framers\", \"summit roofers\"). If a company is not on the list, copy its name as written. Trade must be one of the trades above.\n- manpower.hours is hours worked PER WORKER, not crew total. If the report states a default shift (\"all crews 8 hrs unless noted\"), apply it to every crew without its own hours.\n- delays: one entry per stoppage. hours = clock hours of work lost as stated. Causes: weather; rfi (waiting on an RFI answer; set rfi_no); material (late, short or wrong deliveries); inspection (waiting on or rescheduled inspections); owner_change (owner directives, ASIs, change orders); labor (crew shortages or crews pulled off); equipment (breakdowns); other.\n- weather.weather_delay_hours = hours lost to weather (0 if none). When weather stopped work, also list it in delays with cause weather.\n- safety_events: record every safety-related line, however informal (a one-line note, a hazard someone found and fixed, a correction made on the spot). Never drop one or fold it into notes: a missing safety event is a gap in the job's safety record. Types: near_miss (no injury, could have been one); first_aid (minor care on site); recordable (OSHA recordable: treatment beyond first aid, such as prescription medication, or lost time); observation (unsafe act or condition noted or corrected).\n- inspections result: pass, fail or partial.\n- deliveries.material is what arrived, including the quantity as written (\"12 pallets\"); deliveries.notes is for anything else about it (damage, wrong items, where it was put).\n- Keep descriptions short and in the superintendent's words. notes = anything else worth keeping that fits no other field, otherwise \"\".",
         "cache_control": {
           "type": "ephemeral"
         }
@@ -378,11 +378,11 @@
     "fallbacks": "default"
   },
   "response": {
-    "id": "msg_011Cg2WEpLQmx6hTnUbbxSAa",
+    "id": "msg_011Cg2YHXPG2pWRw3YTV91yW",
     "container": null,
     "content": [
       {
-        "id": "toolu_016D9EW4Pp1X2HyU37nY5vrZ",
+        "id": "toolu_01KJGay2hAUWcQTZjgqod4xc",
         "input": {
           "project": "Harbor Point Medical Office Building",
           "report_date": "2026-10-01",
@@ -481,7 +481,7 @@
           "deliveries": [
             {
               "supplier": "Doorway Hardware Co.",
-              "material": "hollow metal door frames, L1-L2 (24)",
+              "material": "hollow metal door frames, l1-l2 (24)",
               "notes": "6 frames wrong hand, sent back"
             }
           ],
@@ -507,7 +507,7 @@
         "ephemeral_5m_input_tokens": 0
       },
       "cache_creation_input_tokens": 0,
-      "cache_read_input_tokens": 2896,
+      "cache_read_input_tokens": 3026,
       "inference_geo": "global",
       "input_tokens": 406,
       "iterations": [
@@ -517,7 +517,7 @@
             "ephemeral_5m_input_tokens": 0
           },
           "cache_creation_input_tokens": 0,
-          "cache_read_input_tokens": 2896,
+          "cache_read_input_tokens": 3026,
           "input_tokens": 406,
           "model": null,
           "output_tokens": 884,

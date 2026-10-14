@@ -160,3 +160,13 @@ def test_mock_narrator_without_a_recording_fails_loudly(conn, tmp_path):
     narrator = llm.ClaudeNarrator(llm.ReplayTransport(llm.FixtureStore(tmp_path)))
     with pytest.raises(llm.FixtureError, match="never invents"):
         build_weekly(conn, WEEK, PROJECT, narrator)
+
+
+def test_whole_numbers_are_tidied_for_display_only():
+    from fieldreports.weekly import tidy_numbers
+
+    text = "logged 1730.0 man-hours, lost 2.5 hours on 2026-09-22, Keystone at 392.0."
+    assert (
+        tidy_numbers(text)
+        == "logged 1,730 man-hours, lost 2.5 hours on 2026-09-22, Keystone at 392."
+    )

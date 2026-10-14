@@ -15,6 +15,12 @@ from fieldreports import queries
 from fieldreports.llm import ClaudeNarrator
 
 _NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
+_WHOLE_FLOAT = re.compile(r"(?<![\d.,])(\d+)\.0(?!\.?\d)")
+
+
+def tidy_numbers(text: str) -> str:
+    """Display only, after the number check: '1730.0' -> '1,730'. Dates and decimals untouched."""
+    return _WHOLE_FLOAT.sub(lambda m: f"{int(m.group(1)):,}", text)
 
 
 def fmt(n: float | int | None) -> str:
@@ -235,4 +241,4 @@ def build_weekly(
         f"Written by {narrator.model} from the tables below; every number in it was checked "
         "against them."
     )
-    return render(facts, result.text, source), "llm"
+    return render(facts, tidy_numbers(result.text), source), "llm"

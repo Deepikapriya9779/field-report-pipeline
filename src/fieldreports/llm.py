@@ -41,7 +41,7 @@ from fieldreports.schema import ReportFields
 
 DEFAULT_MODEL = "claude-sonnet-5-5"
 FIXTURE_DIR = Path(__file__).resolve().parents[2] / "tests" / "fixtures" / "llm"
-PROMPT_VERSION = "extract-v1"
+PROMPT_VERSION = "extract-v2"  # v2: safety recall, delivery quantities
 TOOL_NAME = "record_daily_report"
 MAX_TOKENS = 16000
 EFFORT = "low"  # narrow, well-specified task; checked against the eval
@@ -131,10 +131,15 @@ inspection (waiting on or rescheduled inspections); owner_change (owner directiv
 change orders); labor (crew shortages or crews pulled off); equipment (breakdowns); other.
 - weather.weather_delay_hours = hours lost to weather (0 if none). When weather stopped work, \
 also list it in delays with cause weather.
-- safety_events types: near_miss (no injury, could have been one); first_aid (minor care on \
-site); recordable (OSHA recordable: treatment beyond first aid, such as prescription \
-medication, or lost time); observation (unsafe act or condition noted or corrected).
+- safety_events: record every safety-related line, however informal (a one-line \
+note, a hazard someone found and fixed, a correction made on the spot). Never drop one or fold \
+it into notes: a missing safety event is a gap in the job's safety record. Types: near_miss \
+(no injury, could have been one); first_aid (minor care on site); recordable (OSHA \
+recordable: treatment beyond first aid, such as prescription medication, or lost time); \
+observation (unsafe act or condition noted or corrected).
 - inspections result: pass, fail or partial.
+- deliveries.material is what arrived, including the quantity as written ("12 pallets"); \
+deliveries.notes is for anything else about it (damage, wrong items, where it was put).
 - Keep descriptions short and in the superintendent's words. notes = anything else worth \
 keeping that fits no other field, otherwise ""."""
 

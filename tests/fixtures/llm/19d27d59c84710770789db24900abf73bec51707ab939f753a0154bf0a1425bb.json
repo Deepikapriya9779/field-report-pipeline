@@ -1,0 +1,101 @@
+{
+  "request_sha256": "19d27d59c84710770789db24900abf73bec51707ab939f753a0154bf0a1425bb",
+  "input_sha256": "41cd37f0a9d032fb30440974e0e0b63139fe9e2b1061bcd22d3c925620ce02ab",
+  "prompt_version": "weekly-v1",
+  "model": "claude-sonnet-5-5",
+  "served_by": "claude-sonnet-5-5",
+  "recorded_at": "2026-10-14T17:41:10+00:00",
+  "usage": {
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "input_tokens": 2828,
+    "iterations": [
+      {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "input_tokens": 2828,
+        "model": null,
+        "output_tokens": 329,
+        "type": "message"
+      }
+    ],
+    "output_tokens": 329,
+    "output_tokens_details": {
+      "thinking_tokens": 0
+    },
+    "service_tier": "standard"
+  },
+  "request": {
+    "model": "claude-sonnet-5-5",
+    "max_tokens": 16000,
+    "system": "You write the one-paragraph summary at the top of a general contractor's weekly field report. The reader is the project manager.\n\nUse only the facts in the JSON you are given. Every number you write must appear in those facts exactly as given: do not add, subtract, average or convert anything yourself. Write 3 to 5 sentences of plain prose, with no heading, list or markdown. Lead with what a project manager acts on: lost time and its causes (name RFI numbers), failed inspections and safety events. Then cover manpower. Do not speculate about schedule impact or anything not in the facts.",
+    "output_config": {
+      "effort": "low"
+    },
+    "messages": [
+      {
+        "role": "user",
+        "content": "<week_facts>\n{\n \"daily\": [\n  {\n   \"extraction_method\": \"rules\",\n   \"headcount\": 43,\n   \"man_hours\": 344.0,\n   \"report_date\": \"2026-09-21\",\n   \"superintendent\": \"Dana Okafor\",\n   \"temp_high_f\": 79,\n   \"temp_low_f\": 66,\n   \"weather_conditions\": \"Partly cloudy\",\n   \"weather_delay_hours\": 0.0\n  },\n  {\n   \"extraction_method\": \"rules\",\n   \"headcount\": 31,\n   \"man_hours\": 248.0,\n   \"report_date\": \"2026-09-22\",\n   \"superintendent\": \"Dana Okafor\",\n   \"temp_high_f\": 66,\n   \"temp_low_f\": 60,\n   \"weather_conditions\": \"Heavy rain\",\n   \"weather_delay_hours\": 8.0\n  },\n  {\n   \"extraction_method\": \"rules\",\n   \"headcount\": 45,\n   \"man_hours\": 316.0,\n   \"report_date\": \"2026-09-23\",\n   \"superintendent\": \"Dana Okafor\",\n   \"temp_high_f\": 70,\n   \"temp_low_f\": 61,\n   \"weather_conditions\": \"Rain until 11 AM, then overcast\",\n   \"weather_delay_hours\": 4.0\n  },\n  {\n   \"extraction_method\": \"rules\",\n   \"headcount\": 47,\n   \"man_hours\": 376.0,\n   \"report_date\": \"2026-09-24\",\n   \"superintendent\": \"Dana Okafor\",\n   \"temp_high_f\": 85,\n   \"temp_low_f\": 69,\n   \"weather_conditions\": \"Hot and humid\",\n   \"weather_delay_hours\": 0.0\n  },\n  {\n   \"extraction_method\": \"llm\",\n   \"headcount\": 44,\n   \"man_hours\": 342.0,\n   \"report_date\": \"2026-09-25\",\n   \"superintendent\": \"Marcus Reyes\",\n   \"temp_high_f\": 79,\n   \"temp_low_f\": 67,\n   \"weather_conditions\": \"Sunny\",\n   \"weather_delay_hours\": 0.0\n  },\n  {\n   \"extraction_method\": \"llm\",\n   \"headcount\": 13,\n   \"man_hours\": 104.0,\n   \"report_date\": \"2026-09-26\",\n   \"superintendent\": \"Marcus Reyes\",\n   \"temp_high_f\": 81,\n   \"temp_low_f\": 69,\n   \"weather_conditions\": \"Hot and humid\",\n   \"weather_delay_hours\": 0.0\n  }\n ],\n \"delay_events\": [\n  {\n   \"cause\": \"weather\",\n   \"description\": \"Heavy rain all day; roofing and curtain wall did not work\",\n   \"hours\": 8.0,\n   \"report_date\": \"2026-09-22\",\n   \"rfi_no\": null\n  },\n  {\n   \"cause\": \"weather\",\n   \"description\": \"Rain until 11 AM; roofing and curtain wall started at 11:30\",\n   \"hours\": 4.0,\n   \"report_date\": \"2026-09-23\",\n   \"rfi_no\": null\n  },\n  {\n   \"cause\": \"owner_change\",\n   \"description\": \"Owner directive ASI-07 relocates exam room 214 wall; drywall held on L2 east\",\n   \"hours\": 2.0,\n   \"report_date\": \"2026-09-24\",\n   \"rfi_no\": null\n  },\n  {\n   \"cause\": \"rfi\",\n   \"description\": \"waiting on RFI 14 response, sprinkler head layout at L3 lobby ceiling\",\n   \"hours\": 2.0,\n   \"report_date\": \"2026-09-25\",\n   \"rfi_no\": 14\n  }\n ],\n \"delay_hours_by_cause\": [\n  {\n   \"cause\": \"weather\",\n   \"events\": 2,\n   \"hours\": 12.0,\n   \"rfis\": \"\"\n  },\n  {\n   \"cause\": \"owner_change\",\n   \"events\": 1,\n   \"hours\": 2.0,\n   \"rfis\": \"\"\n  },\n  {\n   \"cause\": \"rfi\",\n   \"events\": 1,\n   \"hours\": 2.0,\n   \"rfis\": \"14\"\n  }\n ],\n \"deliveries\": [\n  {\n   \"material\": \"Main switchgear MSB-1\",\n   \"notes\": \"Set in L1 electrical room with forklift\",\n   \"report_date\": \"2026-09-21\",\n   \"supplier\": \"Summit Electrical Supply\"\n  },\n  {\n   \"material\": \"5/8 in. type X gypsum board, 8 bunks\",\n   \"notes\": \"\",\n   \"report_date\": \"2026-09-25\",\n   \"supplier\": \"Coastal Gypsum Supply\"\n  }\n ],\n \"inspections\": [\n  {\n   \"inspector_agency\": \"Coastal Testing & Inspection (special inspector)\",\n   \"notes\": \"\",\n   \"report_date\": \"2026-09-21\",\n   \"result\": \"pass\",\n   \"type\": \"Firestopping L1 penetrations\"\n  },\n  {\n   \"inspector_agency\": \"City of Harbor Point Building Dept\",\n   \"notes\": \"\",\n   \"report_date\": \"2026-09-24\",\n   \"result\": \"pass\",\n   \"type\": \"Above-ceiling L1 east\"\n  }\n ],\n \"man_hours_by_sub\": [\n  {\n   \"company\": \"Keystone Interiors LLC\",\n   \"days_on_site\": 5,\n   \"man_hours\": 392.0,\n   \"trade\": \"drywall\",\n   \"worker_days\": 49\n  },\n  {\n   \"company\": \"Volt Line Electric, Inc.\",\n   \"days_on_site\": 5,\n   \"man_hours\": 312.0,\n   \"trade\": \"electrical\",\n   \"worker_days\": 39\n  },\n  {\n   \"company\": \"Summit Roofing & Sheet Metal\",\n   \"days_on_site\": 5,\n   \"man_hours\": 224.0,\n   \"trade\": \"roofing\",\n   \"worker_days\": 31\n  },\n  {\n   \"company\": \"Tidewater Mechanical\",\n   \"days_on_site\": 5,\n   \"man_hours\": 224.0,\n   \"trade\": \"hvac\",\n   \"worker_days\": 28\n  },\n  {\n   \"company\": \"Glassline Curtainwall\",\n   \"days_on_site\": 5,\n   \"man_hours\": 170.0,\n   \"trade\": \"curtain_wall\",\n   \"worker_days\": 25\n  },\n  {\n   \"company\": \"Redline Fire Protection\",\n   \"days_on_site\": 5,\n   \"man_hours\": 152.0,\n   \"trade\": \"fire_sprinkler\",\n   \"worker_days\": 19\n  },\n  {\n   \"company\": \"Bayline Builders (self-perform)\",\n   \"days_on_site\": 6,\n   \"man_hours\": 136.0,\n   \"trade\": \"laborers\",\n   \"worker_days\": 17\n  },\n  {\n   \"company\": \"Clearwater Plumbing Co.\",\n   \"days_on_site\": 5,\n   \"man_hours\": 120.0,\n   \"trade\": \"plumbing\",\n   \"worker_days\": 15\n  }\n ],\n \"peak_headcount\": 47,\n \"project\": \"Harbor Point Medical Office Building\",\n \"reports\": 6,\n \"safety_events\": [\n  {\n   \"description\": \"ladder missing a foot found on L2; tagged out and removed\",\n   \"report_date\": \"2026-09-25\",\n   \"type\": \"observation\"\n  }\n ],\n \"total_delay_hours\": 16.0,\n \"total_man_hours\": 1730.0,\n \"visitors\": [\n  {\n   \"name\": \"Lena Park (Harbor Health, owner's rep)\",\n   \"report_date\": \"2026-09-21\"\n  },\n  {\n   \"name\": \"Priya Sethi (Linework Architects)\",\n   \"report_date\": \"2026-09-21\"\n  }\n ],\n \"weather_days\": [\n  \"2026-09-22\",\n  \"2026-09-23\"\n ],\n \"week_end\": \"2026-09-27\",\n \"week_start\": \"2026-09-21\",\n \"weekdays_without_report\": []\n}\n</week_facts>\n\nWrite the summary paragraph."
+      }
+    ],
+    "betas": [
+      "server-side-fallback-2026-07-01"
+    ],
+    "fallbacks": "default"
+  },
+  "response": {
+    "id": "msg_011Cg2YKEWJmMLo746Q6LtYv",
+    "container": null,
+    "content": [
+      {
+        "text": "The week lost 16.0 hours to delays: 12.0 hours to weather (heavy rain on 2026-09-22 and rain until 11 AM on 2026-09-23, which stopped roofing and curtain wall), 2.0 hours to owner directive ASI-07 relocating the exam room 214 wall (drywall held on L2 east), and 2.0 hours waiting on a response to RFI 14 (sprinkler head layout at the L3 lobby ceiling). Both inspections passed, firestopping on L1 penetrations and above-ceiling on L1 east, and the one safety item was an observation, a ladder missing a foot found on L2 that was tagged out and removed. Across 6 daily reports the crew logged 1730.0 man-hours with a peak headcount of 47. Keystone Interiors (drywall) put in the most hours at 392.0, followed by Volt Line Electric at 312.0, and Saturday 2026-09-26 was a light day with a headcount of 13.",
+        "type": "text"
+      }
+    ],
+    "diagnostics": null,
+    "model": "claude-sonnet-5-5",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "inference_geo": "global",
+      "input_tokens": 2828,
+      "iterations": [
+        {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "input_tokens": 2828,
+          "model": null,
+          "output_tokens": 329,
+          "type": "message"
+        }
+      ],
+      "output_tokens": 329,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "service_tier": "standard"
+    }
+  }
+}

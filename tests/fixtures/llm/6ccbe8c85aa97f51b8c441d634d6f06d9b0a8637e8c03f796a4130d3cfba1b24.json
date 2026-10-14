@@ -1,19 +1,19 @@
 {
-  "request_sha256": "2aad8ebea6df0d80ebdf977b56ba717f84532c837cf09d361a66a153ae96db06",
-  "input_sha256": "71136bdb2b683cdaa5aba5ba4c1849b49ead0a58c481162ca74966050543e276",
-  "prompt_version": "extract-v1",
+  "request_sha256": "6ccbe8c85aa97f51b8c441d634d6f06d9b0a8637e8c03f796a4130d3cfba1b24",
+  "input_sha256": "5db980bb4339840b5e96bc91879de43b4c94b98ec67ea7ef1c8c0796e16ec476",
+  "prompt_version": "extract-v2",
   "model": "claude-sonnet-5-5",
   "served_by": "claude-sonnet-5-5",
-  "recorded_at": "2026-10-14T17:13:33+00:00",
+  "recorded_at": "2026-10-14T17:41:54+00:00",
   "usage": {
     "cache_creation": {
       "ephemeral_1h_input_tokens": 0,
       "ephemeral_5m_input_tokens": 0
     },
     "cache_creation_input_tokens": 0,
-    "cache_read_input_tokens": 2896,
+    "cache_read_input_tokens": 3026,
     "inference_geo": "global",
-    "input_tokens": 402,
+    "input_tokens": 685,
     "iterations": [
       {
         "cache_creation": {
@@ -21,14 +21,14 @@
           "ephemeral_5m_input_tokens": 0
         },
         "cache_creation_input_tokens": 0,
-        "cache_read_input_tokens": 2896,
-        "input_tokens": 402,
+        "cache_read_input_tokens": 3026,
+        "input_tokens": 685,
         "model": null,
-        "output_tokens": 869,
+        "output_tokens": 848,
         "type": "message"
       }
     ],
-    "output_tokens": 869,
+    "output_tokens": 848,
     "output_tokens_details": {
       "thinking_tokens": 0
     },
@@ -40,7 +40,7 @@
     "system": [
       {
         "type": "text",
-        "text": "You extract construction superintendent daily reports into structured data for a general contractor. Read the report and call the record_daily_report tool exactly once. Do not answer in text.\n\nProject: Harbor Point Medical Office Building\nGeneral contractor: Bayline Builders\nSuperintendents: Dana Okafor, Marcus Reyes\nSubcontractors on this job (company, trade):\n- Bayline Builders (self-perform) (laborers)\n- Keystone Interiors LLC (drywall)\n- Volt Line Electric, Inc. (electrical)\n- Tidewater Mechanical (hvac)\n- Clearwater Plumbing Co. (plumbing)\n- Redline Fire Protection (fire_sprinkler)\n- Summit Roofing & Sheet Metal (roofing)\n- Glassline Curtainwall (curtain_wall)\n- Gravel & Grade Sitework (sitework)\nTrades: curtain_wall, drywall, electrical, fire_sprinkler, hvac, laborers, plumbing, roofing, sitework\n\nRules:\n- Record only what the report states. Never invent a value. If the project, report date or superintendent is not stated, use null.\n- report_date is the day the work happened, as the superintendent wrote it (body or subject line). Two-digit years are 20xx. Never use an email's send time.\n- Superintendent and companies: use the full names above when the text clearly refers to them by name, nickname or trade word (\"elec\", \"framers\", \"summit roofers\"). If a company is not on the list, copy its name as written. Trade must be one of the trades above.\n- manpower.hours is hours worked PER WORKER, not crew total. If the report states a default shift (\"all crews 8 hrs unless noted\"), apply it to every crew without its own hours.\n- delays: one entry per stoppage. hours = clock hours of work lost as stated. Causes: weather; rfi (waiting on an RFI answer; set rfi_no); material (late, short or wrong deliveries); inspection (waiting on or rescheduled inspections); owner_change (owner directives, ASIs, change orders); labor (crew shortages or crews pulled off); equipment (breakdowns); other.\n- weather.weather_delay_hours = hours lost to weather (0 if none). When weather stopped work, also list it in delays with cause weather.\n- safety_events types: near_miss (no injury, could have been one); first_aid (minor care on site); recordable (OSHA recordable: treatment beyond first aid, such as prescription medication, or lost time); observation (unsafe act or condition noted or corrected).\n- inspections result: pass, fail or partial.\n- Keep descriptions short and in the superintendent's words. notes = anything else worth keeping that fits no other field, otherwise \"\".",
+        "text": "You extract construction superintendent daily reports into structured data for a general contractor. Read the report and call the record_daily_report tool exactly once. Do not answer in text.\n\nProject: Harbor Point Medical Office Building\nGeneral contractor: Bayline Builders\nSuperintendents: Dana Okafor, Marcus Reyes\nSubcontractors on this job (company, trade):\n- Bayline Builders (self-perform) (laborers)\n- Keystone Interiors LLC (drywall)\n- Volt Line Electric, Inc. (electrical)\n- Tidewater Mechanical (hvac)\n- Clearwater Plumbing Co. (plumbing)\n- Redline Fire Protection (fire_sprinkler)\n- Summit Roofing & Sheet Metal (roofing)\n- Glassline Curtainwall (curtain_wall)\n- Gravel & Grade Sitework (sitework)\nTrades: curtain_wall, drywall, electrical, fire_sprinkler, hvac, laborers, plumbing, roofing, sitework\n\nRules:\n- Record only what the report states. Never invent a value. If the project, report date or superintendent is not stated, use null.\n- report_date is the day the work happened, as the superintendent wrote it (body or subject line). Two-digit years are 20xx. Never use an email's send time.\n- Superintendent and companies: use the full names above when the text clearly refers to them by name, nickname or trade word (\"elec\", \"framers\", \"summit roofers\"). If a company is not on the list, copy its name as written. Trade must be one of the trades above.\n- manpower.hours is hours worked PER WORKER, not crew total. If the report states a default shift (\"all crews 8 hrs unless noted\"), apply it to every crew without its own hours.\n- delays: one entry per stoppage. hours = clock hours of work lost as stated. Causes: weather; rfi (waiting on an RFI answer; set rfi_no); material (late, short or wrong deliveries); inspection (waiting on or rescheduled inspections); owner_change (owner directives, ASIs, change orders); labor (crew shortages or crews pulled off); equipment (breakdowns); other.\n- weather.weather_delay_hours = hours lost to weather (0 if none). When weather stopped work, also list it in delays with cause weather.\n- safety_events: record every safety-related line, however informal (a one-line note, a hazard someone found and fixed, a correction made on the spot). Never drop one or fold it into notes: a missing safety event is a gap in the job's safety record. Types: near_miss (no injury, could have been one); first_aid (minor care on site); recordable (OSHA recordable: treatment beyond first aid, such as prescription medication, or lost time); observation (unsafe act or condition noted or corrected).\n- inspections result: pass, fail or partial.\n- deliveries.material is what arrived, including the quantity as written (\"12 pallets\"); deliveries.notes is for anything else about it (damage, wrong items, where it was put).\n- Keep descriptions short and in the superintendent's words. notes = anything else worth keeping that fits no other field, otherwise \"\".",
         "cache_control": {
           "type": "ephemeral"
         }
@@ -369,7 +369,7 @@
     "messages": [
       {
         "role": "user",
-        "content": "<report>\nHP MOB daily 10/2/26\nMarcus R.\n\nall crews 7-3:30 (8 hrs) unless noted\nwx: clear, hi 79 lo 65\n\nmanpower:\nbayline labor 3 guys\nkeystone - 12 (10 hrs)\nelectricians 9 guys\nmech - 5\nclearwater - 3\nredline fp 3 guys\nsummit roofers x3\nglaziers x5\ngravel & grade x3\n\ndone today:\n- mech: hung branch duct and flex to diffusers L2 east\n- plumb: ran domestic water branches L2 west\n- site: prepped subgrade for curb and gutter East parking lot\n- sprinkler: dropped sprinkler heads to ceiling height L3 east\n\nissues:\n- none\nnear miss: ceiling grid bundle slid off scissor lift deck on l1, no injury\nvisitors: Lena Park (Harbor Health, owner's rep)\n</report>\n\nExtract this report with record_daily_report."
+        "content": "<report>\nBAYLINE BUILDERS - SUPERINTENDENT DAILY REPORT\nForm DR-1 rev 3\n================================================================\nProject: Harbor Point Medical Office Building\nJob No.: 2417\nReport Date: 2026-09-23\nSuperintendent: Dana Okafor\nReport No.: 17\nWEATHER\nConditions: Rain until 11 AM, then overcast\nHigh / Low (F): 70 / 61\nWeather Delay (hrs): 4\nMANPOWER\nCompany | Trade | Headcount | Hours\n----------------------------------------------------------------\nBayline Builders (self-perform) | laborers | 3 | 8\nKeystone Interiors LLC | drywall | 10 | 8\nVolt Line Electric, Inc. | electrical | 8 | 8\nTidewater Mechanical | hvac | 5 | 8\nClearwater Plumbing Co. | plumbing | 3 | 8\nRedline Fire Protection | fire_sprinkler | 5 | 8\nSummit Roofing & Sheet Metal | roofing | 6 | 4\nGlassline Curtainwall | curtain_wall | 5 | 4\nTOTAL | | 45 |\nWORK COMPLETED\n- [L1 east] (fire_sprinkler) Installed branch lines and hangers\n- [L3 east] (electrical) Terminated devices in exam rooms\n- [Main roof] (roofing) Installed edge metal and coping\nDELAYS\n- weather | 4 hrs | Rain until 11 AM; roofing and curtain wall started at 11:30\nSAFETY\n- None\nINSPECTIONS\n- None\nDELIVERIES\n- None\nVISITORS\n- None\nNOTES\nNone\n</report>\n\nExtract this report with record_daily_report."
       }
     ],
     "betas": [
@@ -378,20 +378,20 @@
     "fallbacks": "default"
   },
   "response": {
-    "id": "msg_011Cg2WCwee5gnjNBtnMqnpW",
+    "id": "msg_011Cg2YNQzva9ZhaALnKvNkT",
     "container": null,
     "content": [
       {
-        "id": "toolu_01YLgMJaqjvyWRgE1pyAMY79",
+        "id": "toolu_01Tn4pK1NYE986828sh1UJM3",
         "input": {
           "project": "Harbor Point Medical Office Building",
-          "report_date": "2026-10-02",
-          "superintendent": "Marcus Reyes",
+          "report_date": "2026-09-23",
+          "superintendent": "Dana Okafor",
           "weather": {
-            "conditions": "Clear",
-            "temp_high_f": 79,
-            "temp_low_f": 65,
-            "weather_delay_hours": 0
+            "conditions": "Rain until 11 AM, then overcast",
+            "temp_high_f": 70,
+            "temp_low_f": 61,
+            "weather_delay_hours": 4
           },
           "manpower": [
             {
@@ -403,13 +403,13 @@
             {
               "company": "Keystone Interiors LLC",
               "trade": "drywall",
-              "headcount": 12,
-              "hours": 10
+              "headcount": 10,
+              "hours": 8
             },
             {
               "company": "Volt Line Electric, Inc.",
               "trade": "electrical",
-              "headcount": 9,
+              "headcount": 8,
               "hours": 8
             },
             {
@@ -427,59 +427,50 @@
             {
               "company": "Redline Fire Protection",
               "trade": "fire_sprinkler",
-              "headcount": 3,
+              "headcount": 5,
               "hours": 8
             },
             {
               "company": "Summit Roofing & Sheet Metal",
               "trade": "roofing",
-              "headcount": 3,
-              "hours": 8
+              "headcount": 6,
+              "hours": 4
             },
             {
               "company": "Glassline Curtainwall",
               "trade": "curtain_wall",
               "headcount": 5,
-              "hours": 8
-            },
-            {
-              "company": "Gravel & Grade Sitework",
-              "trade": "sitework",
-              "headcount": 3,
-              "hours": 8
+              "hours": 4
             }
           ],
           "work_completed": [
             {
-              "area": "L2 east",
-              "trade": "hvac",
-              "description": "Hung branch duct and flex to diffusers"
-            },
-            {
-              "area": "L2 west",
-              "trade": "plumbing",
-              "description": "Ran domestic water branches"
-            },
-            {
-              "area": "East parking lot",
-              "trade": "sitework",
-              "description": "Prepped subgrade for curb and gutter"
+              "area": "L1 east",
+              "trade": "fire_sprinkler",
+              "description": "Installed branch lines and hangers"
             },
             {
               "area": "L3 east",
-              "trade": "fire_sprinkler",
-              "description": "Dropped sprinkler heads to ceiling height"
-            }
-          ],
-          "safety_events": [
+              "trade": "electrical",
+              "description": "Terminated devices in exam rooms"
+            },
             {
-              "type": "near_miss",
-              "description": "Ceiling grid bundle slid off scissor lift deck on L1, no injury"
+              "area": "Main roof",
+              "trade": "roofing",
+              "description": "Installed edge metal and coping"
             }
           ],
-          "visitors": [
-            "Lena Park (Harbor Health, owner's rep)"
+          "delays": [
+            {
+              "cause": "weather",
+              "hours": 4,
+              "description": "Rain until 11 AM; roofing and curtain wall started at 11:30"
+            }
           ],
+          "safety_events": [],
+          "inspections": [],
+          "deliveries": [],
+          "visitors": [],
           "notes": ""
         },
         "name": "record_daily_report",
@@ -502,9 +493,9 @@
         "ephemeral_5m_input_tokens": 0
       },
       "cache_creation_input_tokens": 0,
-      "cache_read_input_tokens": 2896,
+      "cache_read_input_tokens": 3026,
       "inference_geo": "global",
-      "input_tokens": 402,
+      "input_tokens": 685,
       "iterations": [
         {
           "cache_creation": {
@@ -512,14 +503,14 @@
             "ephemeral_5m_input_tokens": 0
           },
           "cache_creation_input_tokens": 0,
-          "cache_read_input_tokens": 2896,
-          "input_tokens": 402,
+          "cache_read_input_tokens": 3026,
+          "input_tokens": 685,
           "model": null,
-          "output_tokens": 869,
+          "output_tokens": 848,
           "type": "message"
         }
       ],
-      "output_tokens": 869,
+      "output_tokens": 848,
       "output_tokens_details": {
         "thinking_tokens": 0
       },

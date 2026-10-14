@@ -289,9 +289,20 @@ def test_full_folder_replays_from_recorded_fixtures(tmp_path, roster):
     result = ingest_folder(conn, RAW, roster, today=date(2026, 10, 14), llm=extractor)
     assert (result.count(Status.LOADED), result.count(Status.REVIEW)) == (29, 3)
     assert len(extractor.usage) == 11  # one call per free-form report, no retries
-    # The extract-v1 recording dropped the 9/25 safety observation; the recall check catches it.
-    [caught] = [o for o in result.outcomes if o.doc.path.name == "daily 9-25.txt"]
-    assert "safety-related line" in caught.reasons[0]
+    by_name = {o.doc.path.name: o for o in result.outcomes}
+    # extract-v2 fixed the 9/25 safety observation but dropped the 9/11 first aid line;
+    # the recall check sends 9/11 to review instead of loading a gap in the safety record.
+    assert by_name["daily 9-25.txt"].status is Status.LOADED
+    assert by_name["daily 9-25.txt"].report.safety_events[0].type.value == "observation"
+    assert "safety-related line" in by_name["daily 9-11.txt"].reasons[0]
+
+    # The weekly paragraph was recorded too: it replays and passes the number check.
+    from fieldreports.weekly import build_weekly
+
+    narrator = llm.build_narrator(llm.LLMMode.MOCK)
+    markdown, source = build_weekly(conn, date(2026, 9, 21), roster.project, narrator)
+    assert source == "llm"
+    assert "1,730 man-hours" in markdown
     assert {u["model"] for u in extractor.usage} == {"claude-sonnet-5-5"}
 
 
