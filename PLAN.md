@@ -226,3 +226,22 @@ Runtime dependencies: `anthropic`, `pydantic`, `typer`, `rich`, `pdfplumber`, `p
 3. **Is OneDrive OK?** The project lives in a OneDrive-synced folder. That works, but OneDrive
    can lock the SQLite file during a sync. The DB is gitignored and rebuilt by `ingest`, so the
    risk is small. I'm only mentioning it.
+
+---
+
+## As built (2026-10-14)
+
+All milestones are done. Where the build differs from the plan above:
+
+- **Record mode fills gaps.** `LLM_MODE=record` replays any request that already has a
+  fixture instead of paying again. `LLM_RECORD_REFRESH=1` re-records. This keeps verified
+  recordings stable between record sessions.
+- **Recorded so far:** the 11 free-form reports (11 calls, $0.1136). Not yet recorded: the
+  LLM on the 5 template gold reports (`fieldreports eval --record`) and the weekly narrative.
+  `eval/results.md` and the sample weekly page state both.
+- **`constraints.txt`** pins pydantic and pdfplumber/pdfminer.six, because the fixture key
+  hashes the request, which includes the pydantic schema and the PDF text.
+- **Size.** About 2,600 lines of source and 1,300 of tests, more than the ~1,500 targeted;
+  most of the extra is the weekly renderer, the eval report and the record/replay layer.
+- **CI** is configured but hasn't been verified on GitHub's runners yet. Everything has been
+  run locally on Windows with Python 3.13.
