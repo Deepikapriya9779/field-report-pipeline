@@ -20,10 +20,12 @@ uses an LLM for everything else, refuses to guess on anything it can't verify, a
 those questions with SQL.
 
 **On the 32 sample files (30 working days plus 2 deliberately broken reports):**
-- 30 load automatically: 19 through the rules parser and 11 through the LLM.
-- Both broken reports go to the review queue with a reason.
-- Field-level F1 against 12 hand-checked gold reports is **0.995** (1.000 on the template, 0.992 on free-form).
-- The LLM costs about **$0.010 per free-form report**. Template reports cost nothing.
+- 29 load automatically: 19 through the rules parser and 10 through the LLM.
+- 3 go to the review queue, each with a reason: the 2 broken reports, plus one where the LLM
+  dropped a first-aid entry and a deterministic safety recall check caught it.
+- Field-level F1 against 12 hand-checked gold reports is **0.994**. Both the rules and the LLM
+  score 1.000 on the template; the LLM scores 0.989 on free-form.
+- The LLM costs about **$0.011 per free-form report**. Template reports cost nothing.
 
 Everything here is fictional: the project, the people, the companies and the agencies.
 
@@ -68,18 +70,26 @@ LLM: claude-sonnet-5-5, mode=mock
 │ SCAN0047.txt                     │ review │        │      │ text looks garbled (12% of tokens are   │
 │                                  │        │        │      │ words; OCR noise?)                      │
 │ daily 10-2.txt                   │ loaded │ llm    │ 1.00 │                                         │
-│ daily 9-11.txt                   │ loaded │ llm    │ 1.00 │                                         │
+│ daily 9-11.txt                   │ review │ llm    │ 0.75 │ low confidence 0.75: 1 safety-related   │
+│                                  │        │        │      │ line(s) in the text but 0 safety        │
+│                                  │        │        │      │ event(s) extracted, e.g. 'first aid:    │
+│                                  │        │        │      │ keystone framer cut hand on stud edge;  │
+│                                  │        │        │      │ cleaned an'                             │
 │ daily 9-25.txt                   │ loaded │ llm    │ 1.00 │                                         │
 │ daily 9-26.txt                   │ loaded │ llm    │ 1.00 │                                         │
 │ daily 9-29.txt                   │ loaded │ llm    │ 1.00 │                                         │
 │ daily notes 10-1.pdf             │ loaded │ llm    │ 1.00 │                                         │
 └──────────────────────────────────┴────────┴────────┴──────┴─────────────────────────────────────────┘
-loaded 30 | review 2 | pending 0 | already ingested 0
-LLM calls 11: 4,725 input + 9,114 output tokens, $0.1136 (replayed from fixtures, nothing billed)
+loaded 29 | review 3 | pending 0 | already ingested 0
+LLM calls 11: 4,725 input + 9,381 output tokens, $0.1169 (replayed from fixtures, nothing billed)
 ```
 
-The draft reads 1.00 because the parser read it perfectly. The report itself has no date, which is a hard
-failure regardless of confidence.
+The draft reads 1.00 because the parser read it perfectly. The report itself has no date, which
+is a hard failure regardless of confidence.
+
+The 9/11 entry is the safety recall check at work. The note says "first aid: keystone framer cut
+hand…", but the LLM returned no safety events, so the report goes to review instead of loading a
+gap in the safety record.
 
 **Run it again and nothing changes.** Files are fingerprinted by the sha256 of their bytes:
 
@@ -113,8 +123,10 @@ and came back for the Saturday make-up day. The free-form super wrote "keystone 
 "framers x13 (10 hrs)" and "electricians x8"; the roster resolves all of those to the same
 companies the template uses.
 
-Project to date, `fieldreports query manhours --by sub` gives 10,290 man-hours across 9
-companies. That matches the generator's ground truth to the hour, company by company.
+Project to date, `fieldreports query manhours --by sub` gives 9,914 man-hours across 9
+companies. That matches the generator's ground truth for the 29 loaded days to the hour,
+company by company. The 9/11 report's crews aren't counted until a human clears it from
+review.
 
 **"How many hours did we lose, and to what?"**
 
@@ -141,13 +153,17 @@ response" from a free-form note.
 
 ```
 $ fieldreports review
-                                           Needs review (2)
+                                           Needs review (3)
 ┌──────────────────────────┬──────────────────────────────────────────────┬───────────────────────────┐
 │ file                     │ reason                                       │ queued (UTC)              │
 ├──────────────────────────┼──────────────────────────────────────────────┼───────────────────────────┤
-│ DR_HarborPoint_draft.txt │ missing required field: report_date          │ 2026-10-14T17:29:20+00:00 │
-│ SCAN0047.txt             │ text looks garbled (12% of tokens are words; │ 2026-10-14T17:29:21+00:00 │
+│ DR_HarborPoint_draft.txt │ missing required field: report_date          │ 2026-10-14T17:43:26+00:00 │
+│ SCAN0047.txt             │ text looks garbled (12% of tokens are words; │ 2026-10-14T17:43:26+00:00 │
 │                          │ OCR noise?)                                  │                           │
+│ daily 9-11.txt           │ low confidence 0.75: 1 safety-related        │ 2026-10-14T17:43:26+00:00 │
+│                          │ line(s) in the text but 0 safety event(s)    │                           │
+│                          │ extracted, e.g. 'first aid: keystone framer  │                           │
+│                          │ cut hand on stud edge; cleaned an'           │                           │
 └──────────────────────────┴──────────────────────────────────────────────┴───────────────────────────┘
 ```
 
@@ -159,9 +175,19 @@ $ fieldreports review
 - safety, inspections, deliveries and visitors
 - a flag for any weekday with no report on file
 
-Every table and number comes from SQL. An LLM writes only the one-paragraph summary, and that
-paragraph is rejected if it contains any number that isn't in the SQL results. The sample on disk
-uses the template paragraph, and says so: the narrative call hasn't been recorded yet.
+Every table and number comes from SQL. An LLM writes only the summary paragraph at the top,
+from those numbers alone, and the paragraph is rejected if it contains any number that isn't in
+the SQL results. The recorded one passed:
+
+> The week lost 16 hours to delays: 12 hours to weather (heavy rain on 2026-09-22 and rain until
+> 11 AM on 2026-09-23, which stopped roofing and curtain wall), 2 hours to owner directive ASI-07
+> relocating the exam room 214 wall (drywall held on L2 east), and 2 hours waiting on a response
+> to RFI 14 (sprinkler head layout at the L3 lobby ceiling). Both inspections passed, firestopping
+> on L1 penetrations and above-ceiling on L1 east, and the one safety item was an observation, a
+> ladder missing a foot found on L2 that was tagged out and removed. Across 6 daily reports the
+> crew logged 1,730 man-hours with a peak headcount of 47. Keystone Interiors (drywall) put in
+> the most hours at 392, followed by Volt Line Electric at 312, and Saturday 2026-09-26 was a
+> light day with a headcount of 13.
 
 ## Architecture
 
@@ -198,26 +224,52 @@ in [eval/results.md](eval/results.md).
 |---|---|---|---|---|
 | Rules | template (5) | 1.000 | 1.000 | 1.000 |
 | Rules | free-form (7) | 0.000 | 0.000 | 0.000 |
-| Pipeline (rules first, LLM fallback) | template (5) | 1.000 | 1.000 | 1.000 |
-| Pipeline (rules first, LLM fallback) | free-form (7) | 0.991 | 0.993 | 0.992 |
-| Pipeline (rules first, LLM fallback) | all (12) | 0.994 | 0.996 | 0.995 |
+| LLM | template (5) | 1.000 | 1.000 | 1.000 |
+| LLM | free-form (7) | 0.990 | 0.988 | 0.989 |
+| LLM | all (12) | 0.994 | 0.993 | 0.994 |
+| Pipeline (rules first, LLM fallback) | all (12) | 0.994 | 0.993 | 0.994 |
 
-The pipeline sends free-form reports to the LLM, so the free-form row is the LLM's score.
-By section (all 12): header, weather, manpower (396 facts), delays, inspections, visitors and
-notes are all 1.000.
-- **work_completed: 0.993.** One ambiguous area: "cleaned l1 and l2 … L1 east".
-- **deliveries: 0.909.** Quantities like "8 bunks" went to `notes` instead of staying in
-  `material`.
-- **safety_events: 0.800, the one that matters.** The LLM dropped "safety obs: ladder missing a
-  foot found on l2; tagged out and removed" from the 9/25 report entirely. The weekly summary
-  for that week therefore says "No safety events reported", which is wrong. Confidence scoring
-  didn't catch it, because a fact that's missing has no number to check against the source. This is
-  the next prompt iteration (see [Roadmap](#roadmap)).
+**Rules vs LLM on the same template reports:** both 1.000 on every section. On the template,
+the rules don't buy accuracy; they buy cost ($0 vs about $0.011 a report), speed, and output
+that doesn't vary between runs.
+
+**By section** (pipeline, all 12 reports): header, weather, manpower (396 facts), delays,
+inspections, deliveries and visitors are all 1.000. The remaining errors:
+- **safety_events: recall 0.667.** The LLM dropped the 9/11 first-aid entry entirely.
+- **work_completed: 0.980.** Areas picked up extra words where the note was ambiguous, e.g.
+  "cleaned l1 and l2 … L1 east".
+- **notes: precision 0.667.** The LLM added "Glassline left at 1 PM." as a note; that fact is
+  already in the manpower hours.
+
+### Fixing safety recall: what a prompt change did, and what a check did
+
+The first recording (prompt extract-v1, baseline kept in
+[eval/results_extract-v1.md](eval/results_extract-v1.md)) dropped the 9/25 line "safety obs:
+ladder missing a foot", and the report loaded at confidence 1.00. Confidence couldn't catch it:
+it checks the numbers the extractor produced, and a dropped fact has no number. Two changes
+followed:
+
+1. **A recall check** in `validate.py`. It counts lines that mention safety (near miss, first
+   aid, recordable, injury, tagged out…) and lowers confidence for each line without an
+   extracted event. Against the generator's ground truth it never fires on a correct
+   extraction.
+2. **Prompt extract-v2.** It adds two general rules: never drop a safety-related line, however
+   informal, and keep delivery quantities in `material`. The examples are deliberately not the
+   sample data's wording.
+
+| | extract-v1 | extract-v2 |
+|---|---|---|
+| Overall F1 (pipeline, 12 reports) | 0.995 | 0.994 |
+| deliveries F1 | 0.909 | **1.000** |
+| safety_events recall | 0.667 (missed 9/25) | 0.667 (fixed 9/25, **missed 9/11**) |
+| Safety misses that reached the database | 1 | **0**: the check sent 9/11 to review |
+
+The prompt fixed the quantity convention, but it only moved the safety miss to another report.
+The deterministic check is what kept a gap out of the safety record. That's the case for pairing
+LLM extraction with cheap checks that don't depend on the model.
 
 In mock mode the eval is deterministic and runs in CI. `--record` fills in any missing
-recordings, and `--live` calls the API without saving anything. The rules-vs-LLM comparison
-on identical template inputs (the LLM also run on the 5 template reports) needs one more
-`fieldreports eval --record`.
+recordings, and `--live` calls the API without saving anything.
 
 ## Quick start
 
@@ -233,9 +285,9 @@ fieldreports ingest data/raw          # mock mode by default: replays recorded L
 fieldreports query manhours --by sub --week 2026-09-21
 fieldreports query delays --by cause
 fieldreports review
-fieldreports weekly --week 2026-09-21 --no-llm
-fieldreports eval --methods rules,pipeline
-pytest                                # 187 tests, no network (sockets are blocked)
+fieldreports weekly --week 2026-09-21  # tables from SQL + the recorded summary paragraph
+fieldreports eval                      # writes eval/results.md
+pytest                                 # 191 tests, no network (sockets are blocked)
 ```
 
 To use the API, copy `.env.example` to `.env` and set `ANTHROPIC_API_KEY`. The `LLM_MODE`
@@ -282,8 +334,10 @@ becomes a review item rather than an invented date.
 - needing a retry
 - a company not on the roster
 - a report with no crews
+- a safety-related line in the text with no extracted safety event (the recall check)
 
-It isn't a calibrated probability. It can't catch a fact that's missing (see the eval).
+It isn't a calibrated probability. The number check only sees facts that were extracted; the
+safety recall check covers the section where a missing fact costs the most (see the eval).
 
 **Tool use with schema validation.**
 - **The schema.** The tool's `input_schema` is generated from the pydantic model, with the JSON Schema keywords
@@ -313,21 +367,23 @@ strict mode doesn't support (like `minimum`) stripped out and enforced by pydant
   text, so those versions are pinned in `constraints.txt`.
 - **No network in tests.** Tests refuse all socket connections.
 
-**Cost per report.** The recorded run was 11 calls on `claude-sonnet-5-5` at effort `low`:
-- 4,725 uncached input tokens, 28,960 cache-read tokens, 2,896 cache-write tokens and 9,114
-  output tokens: **$0.1136, or $0.0103 per free-form report**.
-- The 2,896-token system prompt and tool schema are cached after the first call.
-- Template reports cost $0, so the 30 loaded reports average under $0.004 each.
-- At that rate, a super filing free-form reports every working day costs about $2.60 a year.
+**Cost per report.** Extracting the 11 free-form reports took 11 calls on `claude-sonnet-5-5`
+at effort `low`:
+- 4,725 uncached input tokens, 30,260 cache-read tokens, 3,026 cache-write tokens and 9,381
+  output tokens: **$0.1169, or $0.0106 per free-form report**.
+- The 3,026-token system prompt and tool schema are cached after the first call.
+- Template reports cost $0, so across all 30 working days the average is $0.0039 a report.
+- At that rate, a super filing free-form reports every working day costs about $2.65 a year.
+- The whole project's API spend, both recording sessions included, was $0.29.
 
 ## Limitations
 
 - **The data is synthetic.** It has two writers and a limited set of phrasings from a seeded
   generator. Real superintendents write messier reports, so treat the F1 as an upper bound,
   not a forecast. The next real test is a few hundred real reports with gold labels.
-- **Missing facts are invisible to confidence.** The missed safety observation loaded at 1.00.
-  A second check (for example, a cheap "list every safety-related line" pass) would catch this
-  class of miss.
+- **Recall is only checked for safety.** The recall check counts safety-related lines by
+  keyword. A dropped delay or inspection would still load at full confidence, and an unusual
+  phrasing ("guy slipped on the ramp") can get past the keyword list.
 - **No OCR.** A scanned PDF without a text layer is rejected as "no extractable text". A
   garbled OCR result is rejected too.
 - **One sub per trade** is assumed when resolving a bare trade word ("elec"). With two
@@ -335,8 +391,6 @@ strict mode doesn't support (like `minimum`) stripped out and enforced by pydant
 - **The week is the only time filter.** A month or custom date range is a small SQL change,
   not built yet.
 - **Revised reports** go to review. Picking the right version is a human call.
-- **Not yet recorded:** the LLM on the 5 template gold reports (the rules-vs-LLM comparison)
-  and the weekly narrative paragraph. Both are one `--record` run away.
 - **CI** is configured for Python 3.11 and 3.12 but has only been run locally (Windows,
   Python 3.13).
 
@@ -347,8 +401,9 @@ strict mode doesn't support (like `minimum`) stripped out and enforced by pydant
   supers who email their dailies.
 - **Photo attachments.** Supers attach progress and safety photos. Vision extraction could tag
   them to work items and safety events.
-- **Safety recall.** Fix the missed observation with a prompt change, re-record, and report the
-  before/after in the eval.
+- **Recall checks beyond safety.** Apply the same idea to delays (lines like "lost 2 hrs") and
+  inspections. For the high-stakes sections, extract twice and send any disagreement to
+  review.
 - **Review UI.** Approve, edit or reject review items, so the fixes become new gold data.
 - **Date ranges and exports.** Month-to-date man-hours by sub, and a CSV/Excel export for pay
   application backup.
@@ -373,7 +428,7 @@ src/fieldreports/
   cli.py        typer + rich
 scripts/generate_reports.py   seeded synthetic data
 data/raw  data/gold  data/project.yaml
-tests/        187 tests; tests/fixtures/llm holds the recorded responses
+tests/        191 tests; tests/fixtures/llm holds the recorded responses
 ```
 
 See [LEARNING.md](LEARNING.md) for a code walkthrough, the construction background, every

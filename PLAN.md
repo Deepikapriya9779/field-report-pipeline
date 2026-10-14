@@ -229,16 +229,18 @@ Runtime dependencies: `anthropic`, `pydantic`, `typer`, `rich`, `pdfplumber`, `p
 
 ---
 
-## As built (2026-10-14)
+## As built (2026-10-14, updated after the extract-v2 recording)
 
 All milestones are done. Where the build differs from the plan above:
 
 - **Record mode fills gaps.** `LLM_MODE=record` replays any request that already has a
   fixture instead of paying again. `LLM_RECORD_REFRESH=1` re-records. This keeps verified
   recordings stable between record sessions.
-- **Recorded so far:** the 11 free-form reports (11 calls, $0.1136). Not yet recorded: the
-  LLM on the 5 template gold reports (`fieldreports eval --record`) and the weekly narrative.
-  `eval/results.md` and the sample weekly page state both.
+- **Everything is recorded** with prompt extract-v2: 11 free-form reports, 5 template gold
+  reports and the weekly narrative (17 calls, $0.1797). The extract-v1 run ($0.1136) is kept as
+  `eval/results_extract-v1.md`. Total API spend for the build: $0.29.
+- **Added after the first eval:** a safety recall check in `validate.py`. Both recordings
+  dropped one safety entry; the check sends that report to review.
 - **`constraints.txt`** pins pydantic and pdfplumber/pdfminer.six, because the fixture key
   hashes the request, which includes the pydantic schema and the PDF text.
 - **Size.** About 2,600 lines of source and 1,300 of tests, more than the ~1,500 targeted;

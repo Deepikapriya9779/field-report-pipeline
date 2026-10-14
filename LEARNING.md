@@ -76,8 +76,12 @@ defines the `LLMExtractor` protocol, so the pipeline doesn't depend on Anthropic
 - `text_problem()` rejects empty or garbled text *before* any extractor runs. It works from the
   share of tokens that look like words: clean reports score ≥ 0.89, the OCR sample 0.12.
 - `validate()` collects **hard failures** (always review) and **penalties** (lower
-  confidence). The most important penalty is `_ungrounded_numbers()`: any headcount, hours,
-  delay hours, RFI number or temperature that doesn't appear in the source text.
+  confidence). There are two key penalties:
+  - `_ungrounded_numbers()`, a precision check: any headcount, hours, delay hours, RFI number or
+    temperature that doesn't appear in the source text.
+  - `safety_lines()`, a recall check: lines that mention a safety event, compared with the
+    events actually extracted. It exists because the LLM dropped safety entries in both
+    recordings, and a dropped fact has no number to check.
 
 ### `pipeline.py`: one document's outcome
 `process()` runs: text check → extract → normalize → validate, and returns `loaded`, `review`
@@ -224,6 +228,7 @@ of the area passed and the rest needs another visit.
 | Tool use with a pydantic-generated schema | JSON in a text response; structured outputs (`output_config.format`) | One schema source (pydantic), strict argument validation, and an obvious place to send errors back (`tool_result` with `is_error`). Structured outputs would also work; tool use was the brief. |
 | `tool_choice: auto` plus a prompt instruction | Forced `tool_choice` | Claude Sonnet 5.5 returns a 400 on forced tool choice, so the code checks that the tool was called and treats "no call" as a failed attempt. |
 | Exactly one retry | No retry; retry until valid | One retry fixes most formatting slips. More retries add cost and pressure the model to make up values to get past validation. |
+| A deterministic safety recall check, alongside a prompt fix | Prompt fix only | The prompt fix moved the miss from 9/25 to 9/11 rather than removing it. A keyword count doesn't depend on the model, and turned the miss into a review item. |
 | SQLite and raw SQL | An ORM; Postgres | One file, no server, readable queries a reviewer can check. Moving to Postgres later is mostly the DDL. |
 | Man-hours computed in SQL | Stored column | A stored derived value can drift from its inputs. |
 | Hash of the bytes for idempotency | Filename; mtime | Filenames get changed by forwarding and renaming; mtimes change on copy. The same bytes are the same report. |
@@ -283,7 +288,7 @@ check, confidence), then load or review.
 schema-valid, but it ignores keywords like `minimum`, which `tool_schema()` strips out.
 Pydantic enforces those on the client side. The two layers cover each other.
 
-**Prompt caching.** The system prompt plus the tool schema (2,896 tokens) is marked
+**Prompt caching.** The system prompt plus the tool schema (3,026 tokens) is marked
 `cache_control: ephemeral`. In the recorded run, the first call wrote the cache and the next
 10 read it at a tenth of the input price.
 
@@ -328,16 +333,17 @@ west corridor walls" is 2·2/(2+4) = 0.67, a match; "L1 west" vs "L3 east" is 0.
 **Scores.** Precision = TP/(TP+FP), recall = TP/(TP+FN), F1 = 2PR/(P+R). They're
 **micro-averaged**: facts are pooled across reports, so manpower (396 gold facts) weighs far
 more than visitors (1). That's appropriate for "how many facts are right", but it's why the
-per-section table matters: the 0.800 on safety is hidden inside 0.995 overall.
+per-section table matters: a 0.800 on safety is hidden inside 0.994 overall.
 
 **Worked example** from `tests/test_evaluate.py`. Gold: Keystone 8×8 and Volt Line 6×8.
 Prediction: Keystone with headcount 9, and Volt Line correct. Seven fields agree (TP=7) and
 one is wrong (FP=1, FN=1). Precision 7/8, recall 7/8, F1 0.875.
 
-**What the numbers mean here.** The 12 gold reports cover every format. Rules are 1.000 on
-the template; the LLM is 0.992 on free-form. The errors listed in `eval/results.md` are
-specific and explainable: one dropped safety observation, quantities moved to delivery notes,
-and one ambiguous area. The data is synthetic, so these are upper bounds.
+**What the numbers mean here.** The 12 gold reports cover every format. Rules and the LLM
+are both 1.000 on the template; the LLM is 0.989 on free-form. The errors listed in
+`eval/results.md` are specific and explainable: one dropped first-aid entry, a fact repeated
+into notes, and ambiguous areas. `eval/results_extract-v1.md` keeps the earlier prompt's run
+for comparison. The data is synthetic, so these are upper bounds.
 
 ---
 
@@ -358,6 +364,9 @@ There are four layers:
 - A grounding check lowers confidence for any number that doesn't appear in the source text.
 - The eval measures accuracy against hand-checked gold.
 
+- A recall check compares safety-related lines in the text with the events extracted, because
+  numbers can't reveal a fact that was dropped.
+
 Anything that fails a rule or scores under 0.80 goes to a human instead of the database.
 
 **3. What happens when the model returns invalid output?**
@@ -377,12 +386,18 @@ clean is cheaper than finding the bad row later. The queue keeps the reason and 
 payload, so review is quick.
 
 **6. How is confidence computed, and what can't it catch?**
-It starts at 1.0. Each number missing from the source text costs 0.15, a retry 0.10, an
-unknown company 0.10, and no crews 0.30. Below 0.80 goes to review. It's a heuristic, not a
-probability. Its blind spot showed up in the eval: the LLM dropped a safety observation
-entirely, and a missing fact has no number to check, so the report loaded at 1.00. The fix
-is a recall check, such as comparing safety-related lines in the text against extracted
-events.
+It starts at 1.0. The penalties:
+- each number missing from the source text: 0.15
+- a retry: 0.10
+- an unknown company: 0.10
+- no crews: 0.30
+- each safety-related line with no extracted event: 0.25
+
+Below 0.80 goes to review. It's a heuristic, not a probability. The number check was blind to
+dropped facts, and that showed up in the eval: the first recording dropped a safety
+observation, and the report loaded at 1.00. That's why the recall check exists. It's
+keyword-based and covers safety only, so a dropped delay would still get through, and that's
+the next thing to extend.
 
 **7. How does idempotent ingest work, and what about revised reports?**
 Each file is identified by the sha256 of its bytes; a file already in the `files` table is
@@ -408,20 +423,27 @@ Field-level precision, recall and F1, per section. Each crew's company, trade, h
 hours is one fact. Items are matched regardless of order, a wrong value counts as both a
 false positive and a false negative, and fields empty on both sides are ignored. Numbers must
 match exactly; free text matches at token overlap ≥ 0.6. It's micro-averaged, so I always
-show the per-section table too, because a 0.800 on safety can hide inside a 0.995 overall.
+show the per-section table too, because a 0.800 on safety can hide inside a 0.994 overall.
 
-**11. Your F1 is 0.995. Would you trust that in production?**
+**11. Your F1 is 0.994. Would you trust that in production?**
 Not as a forecast. The data is synthetic, from two writers with a limited set of phrasings.
 It shows the pipeline works and gives an honest error list. Before trusting a number, I'd
 label a few hundred real reports from several supers and measure again. The architecture
 doesn't change: the gold set grows, and review-queue corrections become new gold data.
 
 **12. A PM says the weekly report missed a safety event. How do you debug it?**
-That happened here. The 9/25 weekly page said "No safety events reported", but the note had
-"safety obs: ladder missing a foot". I'd check the eval error list (it shows the miss), then
-the recorded fixture for 9/25 (the tool input had no `safety_events` key at all), so this was
-an extraction recall problem, not a query bug. The fix is a prompt change plus a recall check,
-then a re-record, with the eval showing safety recall before and after.
+That happened here. With the first prompt, the weekly page for 9/21 said "No safety events
+reported", but the 9/25 note had "safety obs: ladder missing a foot".
+1. I checked the eval error list, which showed the miss.
+2. I checked the recorded fixture: the tool input had no `safety_events` key at all. So it was
+   an extraction recall problem, not a query bug.
+3. I made two fixes: a deterministic recall check, and a general prompt rule never to drop a
+   safety line.
+
+After re-recording, 9/25 came through, but the LLM dropped the 9/11 first-aid entry instead,
+so recall stayed at 0.667. The check sent 9/11 to review, and no safety gap reached the
+database. The lesson: prompts shift errors around, and a cheap check that doesn't depend on the
+model is what makes the guarantee.
 
 **13. How would you scale this to 50 jobs, or connect it to Procore?**
 Add a `project_id` throughout, which the roster already implies, and move to Postgres.
@@ -431,8 +453,9 @@ the supers who email their dailies. Ingest is idempotent, so it can run on a sch
 Message Batches API would halve LLM cost for overnight backfills.
 
 **14. What does it cost, and how would you cut it further?**
-About $0.0103 per free-form report on Sonnet 5.5 at low effort: 11 recorded calls, $0.1136.
-Template reports cost nothing. Prompt caching already serves the 2,896-token system prompt
+About $0.0106 per free-form report on Sonnet 5.5 at low effort: 11 recorded calls, $0.1169.
+Template reports cost nothing. Across the whole build, both recording sessions came to $0.29.
+Prompt caching already serves the 3,026-token system prompt
 and schema at a tenth of the input price after the first call. Further levers:
 - batch processing for backfills (50% off)
 - a smaller model for simple notes, checked against the eval first
@@ -455,17 +478,18 @@ A PM asks "how many man-hours did the drywall sub put in *this month*?". Add `--
 - **Done when:** a test on the hand-built database in `tests/test_queries.py` checks a range
   that crosses a week boundary, and `--week` still works.
 
-### Exercise 2: catch missed safety events
-The LLM dropped a safety observation, and confidence stayed at 1.00. Add a recall check to
-`validate.py`: if the source text has a line matching safety vocabulary ("safety", "near
-miss", "first aid", "recordable", "injur", "tagged out") and the extraction has no
-`safety_events`, apply a penalty large enough to send the report to review.
-- **Careful:** every template report has a `SAFETY` heading, even when the section is "- None",
-  so a naive keyword search flags them all.
-- **Done when:** `daily 9-25.txt` goes to review in a test using the recorded fixture, no other
-  report changes status (run the full-folder replay test), and the eval shows the change.
-- **Extension:** change the prompt instead, re-record with `LLM_MODE=record`, and compare
-  safety recall before and after in `eval/results.md`.
+### Exercise 2: a recall check for delays
+The safety recall check (`safety_lines()` in `validate.py`) counts safety-related lines and
+compares them with the extracted events. Build the same thing for delays. Lost time is what
+claims are built on, and a dropped "lost 2 hrs - waiting on RFI 14" would load at full
+confidence today.
+- Count lines that report lost time ("lost", "hrs lost", "waiting on", "held", "rained out")
+  and compare them with `report.delays`.
+- **Careful:** the template's `DELAYS` heading and "- None" lines, and lines that mention hours
+  without any lost time ("all crews 7-3:30 (8 hrs)").
+- **Done when:** it never fires on a correct extraction across all 30 days (check against the
+  generator's truth, as was done for safety), a unit test drops a delay and sees the report go to
+  review, and the full-folder replay test still passes.
 
 ### Exercise 3: two subs in the same trade
 Add a second electrical sub to `data/project.yaml`. A bare "elec 6 guys" is now ambiguous.
