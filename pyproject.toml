@@ -43,3 +43,6 @@ ignore = ["SIM300"]  # constant-on-the-left reads fine in asserts
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/generate_reports.py" = ["E501"]  # event tables hold long literal report sentences

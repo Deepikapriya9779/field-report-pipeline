@@ -1,0 +1,109 @@
+{
+  "source_file": "daily 9-11.txt",
+  "report": {
+    "project": "Harbor Point Medical Office Building",
+    "report_date": "2026-09-11",
+    "superintendent": "Marcus Reyes",
+    "weather": {
+      "conditions": "Overcast",
+      "temp_high_f": 85,
+      "temp_low_f": 69,
+      "weather_delay_hours": 0.0
+    },
+    "manpower": [
+      {
+        "company": "Bayline Builders (self-perform)",
+        "trade": "laborers",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Keystone Interiors LLC",
+        "trade": "drywall",
+        "headcount": 9,
+        "hours": 8.0
+      },
+      {
+        "company": "Volt Line Electric, Inc.",
+        "trade": "electrical",
+        "headcount": 7,
+        "hours": 8.0
+      },
+      {
+        "company": "Tidewater Mechanical",
+        "trade": "hvac",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Clearwater Plumbing Co.",
+        "trade": "plumbing",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Redline Fire Protection",
+        "trade": "fire_sprinkler",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Summit Roofing & Sheet Metal",
+        "trade": "roofing",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Glassline Curtainwall",
+        "trade": "curtain_wall",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Gravel & Grade Sitework",
+        "trade": "sitework",
+        "headcount": 5,
+        "hours": 8.0
+      }
+    ],
+    "work_completed": [
+      {
+        "area": "L3 west",
+        "trade": "fire_sprinkler",
+        "description": "Ran branch lines"
+      },
+      {
+        "area": "L1 east",
+        "trade": "hvac",
+        "description": "Installed VAV boxes"
+      },
+      {
+        "area": "Main roof",
+        "trade": "roofing",
+        "description": "Flashed RTU curbs"
+      },
+      {
+        "area": "L1 east",
+        "trade": "laborers",
+        "description": "Cleaned L1 and L2, loaded dumpster"
+      }
+    ],
+    "delays": [],
+    "safety_events": [
+      {
+        "type": "first_aid",
+        "description": "Keystone framer cut hand on stud edge; cleaned and bandaged on site, back to work"
+      }
+    ],
+    "inspections": [],
+    "deliveries": [
+      {
+        "supplier": "Coastal Gypsum Supply",
+        "material": "5/8 in. Type X gypsum board, 8 bunks",
+        "notes": ""
+      }
+    ],
+    "visitors": [],
+    "notes": ""
+  }
+}

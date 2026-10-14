@@ -1,0 +1,98 @@
+{
+  "source_file": "DR_2026-09-02_HarborPoint.txt",
+  "report": {
+    "project": "Harbor Point Medical Office Building",
+    "report_date": "2026-09-02",
+    "superintendent": "Dana Okafor",
+    "weather": {
+      "conditions": "Clear",
+      "temp_high_f": 85,
+      "temp_low_f": 71,
+      "weather_delay_hours": 0.0
+    },
+    "manpower": [
+      {
+        "company": "Bayline Builders (self-perform)",
+        "trade": "laborers",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Keystone Interiors LLC",
+        "trade": "drywall",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Volt Line Electric, Inc.",
+        "trade": "electrical",
+        "headcount": 6,
+        "hours": 8.0
+      },
+      {
+        "company": "Tidewater Mechanical",
+        "trade": "hvac",
+        "headcount": 6,
+        "hours": 8.0
+      },
+      {
+        "company": "Clearwater Plumbing Co.",
+        "trade": "plumbing",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Redline Fire Protection",
+        "trade": "fire_sprinkler",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Summit Roofing & Sheet Metal",
+        "trade": "roofing",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Gravel & Grade Sitework",
+        "trade": "sitework",
+        "headcount": 4,
+        "hours": 8.0
+      }
+    ],
+    "work_completed": [
+      {
+        "area": "L3 west",
+        "trade": "plumbing",
+        "description": "Roughed in restroom core waste and vent"
+      },
+      {
+        "area": "L1 east",
+        "trade": "drywall",
+        "description": "Installed top track and in-wall blocking"
+      },
+      {
+        "area": "East parking lot",
+        "trade": "sitework",
+        "description": "Installed storm drain inlet protection"
+      }
+    ],
+    "delays": [],
+    "safety_events": [
+      {
+        "type": "observation",
+        "description": "Debris at L2 stair landing; laborers cleaned it up"
+      }
+    ],
+    "inspections": [],
+    "deliveries": [
+      {
+        "supplier": "Coastal Gypsum Supply",
+        "material": "5/8 in. Type X gypsum board, 12 bunks",
+        "notes": "Boom-loaded to L2 and L3"
+      }
+    ],
+    "visitors": [],
+    "notes": ""
+  }
+}

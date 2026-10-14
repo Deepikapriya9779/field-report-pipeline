@@ -1,0 +1,94 @@
+{
+  "source_file": "DR_2026-09-23_HarborPoint.pdf",
+  "report": {
+    "project": "Harbor Point Medical Office Building",
+    "report_date": "2026-09-23",
+    "superintendent": "Dana Okafor",
+    "weather": {
+      "conditions": "Rain until 11 AM, then overcast",
+      "temp_high_f": 70,
+      "temp_low_f": 61,
+      "weather_delay_hours": 4.0
+    },
+    "manpower": [
+      {
+        "company": "Bayline Builders (self-perform)",
+        "trade": "laborers",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Keystone Interiors LLC",
+        "trade": "drywall",
+        "headcount": 10,
+        "hours": 8.0
+      },
+      {
+        "company": "Volt Line Electric, Inc.",
+        "trade": "electrical",
+        "headcount": 8,
+        "hours": 8.0
+      },
+      {
+        "company": "Tidewater Mechanical",
+        "trade": "hvac",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Clearwater Plumbing Co.",
+        "trade": "plumbing",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Redline Fire Protection",
+        "trade": "fire_sprinkler",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Summit Roofing & Sheet Metal",
+        "trade": "roofing",
+        "headcount": 6,
+        "hours": 4.0
+      },
+      {
+        "company": "Glassline Curtainwall",
+        "trade": "curtain_wall",
+        "headcount": 5,
+        "hours": 4.0
+      }
+    ],
+    "work_completed": [
+      {
+        "area": "L1 east",
+        "trade": "fire_sprinkler",
+        "description": "Installed branch lines and hangers"
+      },
+      {
+        "area": "L3 east",
+        "trade": "electrical",
+        "description": "Terminated devices in exam rooms"
+      },
+      {
+        "area": "Main roof",
+        "trade": "roofing",
+        "description": "Installed edge metal and coping"
+      }
+    ],
+    "delays": [
+      {
+        "cause": "weather",
+        "hours": 4.0,
+        "description": "Rain until 11 AM; roofing and curtain wall started at 11:30",
+        "rfi_no": null
+      }
+    ],
+    "safety_events": [],
+    "inspections": [],
+    "deliveries": [],
+    "visitors": [],
+    "notes": ""
+  }
+}

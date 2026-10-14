@@ -1,0 +1,112 @@
+{
+  "source_file": "Daily - Harbor Pt MOB - 9-4.eml",
+  "report": {
+    "project": "Harbor Point Medical Office Building",
+    "report_date": "2026-09-04",
+    "superintendent": "Marcus Reyes",
+    "weather": {
+      "conditions": "Overcast",
+      "temp_high_f": 85,
+      "temp_low_f": 70,
+      "weather_delay_hours": 0.0
+    },
+    "manpower": [
+      {
+        "company": "Bayline Builders (self-perform)",
+        "trade": "laborers",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Keystone Interiors LLC",
+        "trade": "drywall",
+        "headcount": 7,
+        "hours": 8.0
+      },
+      {
+        "company": "Volt Line Electric, Inc.",
+        "trade": "electrical",
+        "headcount": 6,
+        "hours": 8.0
+      },
+      {
+        "company": "Tidewater Mechanical",
+        "trade": "hvac",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Clearwater Plumbing Co.",
+        "trade": "plumbing",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Redline Fire Protection",
+        "trade": "fire_sprinkler",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Summit Roofing & Sheet Metal",
+        "trade": "roofing",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Gravel & Grade Sitework",
+        "trade": "sitework",
+        "headcount": 5,
+        "hours": 8.0
+      }
+    ],
+    "work_completed": [
+      {
+        "area": "Main roof",
+        "trade": "roofing",
+        "description": "Installed membrane on main roof"
+      },
+      {
+        "area": "L2 east",
+        "trade": "electrical",
+        "description": "Set boxes and ran MC cable in exam rooms"
+      },
+      {
+        "area": "L1 east",
+        "trade": "plumbing",
+        "description": "Roughed in restroom core waste and vent"
+      },
+      {
+        "area": "L1 west",
+        "trade": "laborers",
+        "description": "Cleaned L1 and L2, loaded dumpster"
+      },
+      {
+        "area": "L1 east",
+        "trade": "hvac",
+        "description": "Hung main supply duct"
+      }
+    ],
+    "delays": [
+      {
+        "cause": "equipment",
+        "hours": 1.5,
+        "description": "Boom lift would not start; roofers waited on mechanic",
+        "rfi_no": null
+      }
+    ],
+    "safety_events": [],
+    "inspections": [],
+    "deliveries": [
+      {
+        "supplier": "Summit Electrical Supply",
+        "material": "Wire and MC cable, 14 reels",
+        "notes": ""
+      }
+    ],
+    "visitors": [
+      "Priya Sethi (Linework Architects)"
+    ],
+    "notes": ""
+  }
+}

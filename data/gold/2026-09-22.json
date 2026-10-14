@@ -1,0 +1,87 @@
+{
+  "source_file": "DR_2026-09-22_HarborPoint.txt",
+  "report": {
+    "project": "Harbor Point Medical Office Building",
+    "report_date": "2026-09-22",
+    "superintendent": "Dana Okafor",
+    "weather": {
+      "conditions": "Heavy rain",
+      "temp_high_f": 66,
+      "temp_low_f": 60,
+      "weather_delay_hours": 8.0
+    },
+    "manpower": [
+      {
+        "company": "Bayline Builders (self-perform)",
+        "trade": "laborers",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Keystone Interiors LLC",
+        "trade": "drywall",
+        "headcount": 9,
+        "hours": 8.0
+      },
+      {
+        "company": "Volt Line Electric, Inc.",
+        "trade": "electrical",
+        "headcount": 7,
+        "hours": 8.0
+      },
+      {
+        "company": "Tidewater Mechanical",
+        "trade": "hvac",
+        "headcount": 6,
+        "hours": 8.0
+      },
+      {
+        "company": "Clearwater Plumbing Co.",
+        "trade": "plumbing",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Redline Fire Protection",
+        "trade": "fire_sprinkler",
+        "headcount": 3,
+        "hours": 8.0
+      }
+    ],
+    "work_completed": [
+      {
+        "area": "L2 west",
+        "trade": "hvac",
+        "description": "Insulated supply duct"
+      },
+      {
+        "area": "L1 east",
+        "trade": "electrical",
+        "description": "Terminated devices in exam rooms"
+      },
+      {
+        "area": "L2 east",
+        "trade": "laborers",
+        "description": "Moved board stock to work areas"
+      },
+      {
+        "area": "L1 east",
+        "trade": "fire_sprinkler",
+        "description": "Installed branch lines and hangers"
+      }
+    ],
+    "delays": [
+      {
+        "cause": "weather",
+        "hours": 8.0,
+        "description": "Heavy rain all day; roofing and curtain wall did not work",
+        "rfi_no": null
+      }
+    ],
+    "safety_events": [],
+    "inspections": [],
+    "deliveries": [],
+    "visitors": [],
+    "notes": "Interior trades worked full day. Pumped water from elevator pit."
+  }
+}

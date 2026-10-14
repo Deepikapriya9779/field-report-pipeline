@@ -1,0 +1,104 @@
+{
+  "source_file": "Daily - Harbor Pt MOB - 9-18.eml",
+  "report": {
+    "project": "Harbor Point Medical Office Building",
+    "report_date": "2026-09-18",
+    "superintendent": "Marcus Reyes",
+    "weather": {
+      "conditions": "Partly cloudy",
+      "temp_high_f": 81,
+      "temp_low_f": 66,
+      "weather_delay_hours": 0.0
+    },
+    "manpower": [
+      {
+        "company": "Bayline Builders (self-perform)",
+        "trade": "laborers",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Keystone Interiors LLC",
+        "trade": "drywall",
+        "headcount": 9,
+        "hours": 8.0
+      },
+      {
+        "company": "Volt Line Electric, Inc.",
+        "trade": "electrical",
+        "headcount": 7,
+        "hours": 8.0
+      },
+      {
+        "company": "Tidewater Mechanical",
+        "trade": "hvac",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Clearwater Plumbing Co.",
+        "trade": "plumbing",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Redline Fire Protection",
+        "trade": "fire_sprinkler",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Summit Roofing & Sheet Metal",
+        "trade": "roofing",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Glassline Curtainwall",
+        "trade": "curtain_wall",
+        "headcount": 4,
+        "hours": 8.0
+      }
+    ],
+    "work_completed": [
+      {
+        "area": "L3 east",
+        "trade": "electrical",
+        "description": "Set boxes and ran MC cable in exam rooms"
+      },
+      {
+        "area": "East elevation",
+        "trade": "curtain_wall",
+        "description": "Set curtain wall units"
+      },
+      {
+        "area": "Main roof",
+        "trade": "roofing",
+        "description": "Flashed RTU curbs"
+      },
+      {
+        "area": "L3 east",
+        "trade": "plumbing",
+        "description": "Roughed in restroom core waste and vent"
+      },
+      {
+        "area": "L1 west",
+        "trade": "laborers",
+        "description": "Cleaned L1 and L2, loaded dumpster"
+      }
+    ],
+    "delays": [],
+    "safety_events": [],
+    "inspections": [
+      {
+        "type": "Sprinkler hydrostatic re-test L1",
+        "inspector_agency": "Harbor Point Fire Marshal",
+        "result": "pass",
+        "notes": "Held 200 psi for 2 hours"
+      }
+    ],
+    "deliveries": [],
+    "visitors": [],
+    "notes": ""
+  }
+}

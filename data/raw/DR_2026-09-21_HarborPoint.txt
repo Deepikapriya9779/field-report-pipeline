@@ -1,0 +1,51 @@
+BAYLINE BUILDERS - SUPERINTENDENT DAILY REPORT
+Form DR-1 rev 3
+================================================================
+Project:          Harbor Point Medical Office Building
+Job No.:          2417
+Report Date:      2026-09-21
+Superintendent:   Dana Okafor
+Report No.:       15
+
+WEATHER
+Conditions:       Partly cloudy
+High / Low (F):   79 / 66
+Weather Delay (hrs): 0
+
+MANPOWER
+Company                         | Trade          | Headcount | Hours
+----------------------------------------------------------------
+Bayline Builders (self-perform) | laborers       | 3         | 8
+Keystone Interiors LLC          | drywall        | 10        | 8
+Volt Line Electric, Inc.        | electrical     | 7         | 8
+Tidewater Mechanical            | hvac           | 5         | 8
+Clearwater Plumbing Co.         | plumbing       | 3         | 8
+Redline Fire Protection         | fire_sprinkler | 4         | 8
+Summit Roofing & Sheet Metal    | roofing        | 6         | 8
+Glassline Curtainwall           | curtain_wall   | 5         | 8
+TOTAL                           |                | 43        |
+
+WORK COMPLETED
+- [L2 east] (fire_sprinkler) Dropped sprinkler heads to ceiling height
+- [L3 east] (electrical) Pulled wire for lighting circuits
+- [L3 west] (plumbing) Ran domestic water branches
+- [L1 east] (drywall) Hung 5/8 board on corridor walls
+
+DELAYS
+- None
+
+SAFETY
+- None
+
+INSPECTIONS
+- Firestopping L1 penetrations | Coastal Testing & Inspection (special inspector) | pass
+
+DELIVERIES
+- Summit Electrical Supply | Main switchgear MSB-1 | Set in L1 electrical room with forklift
+
+VISITORS
+- Lena Park (Harbor Health, owner's rep)
+- Priya Sethi (Linework Architects)
+
+NOTES
+None

@@ -1,0 +1,105 @@
+{
+  "source_file": "daily 9-29.txt",
+  "report": {
+    "project": "Harbor Point Medical Office Building",
+    "report_date": "2026-09-29",
+    "superintendent": "Marcus Reyes",
+    "weather": {
+      "conditions": "Overcast",
+      "temp_high_f": 82,
+      "temp_low_f": 66,
+      "weather_delay_hours": 0.0
+    },
+    "manpower": [
+      {
+        "company": "Bayline Builders (self-perform)",
+        "trade": "laborers",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Keystone Interiors LLC",
+        "trade": "drywall",
+        "headcount": 13,
+        "hours": 10.0
+      },
+      {
+        "company": "Volt Line Electric, Inc.",
+        "trade": "electrical",
+        "headcount": 8,
+        "hours": 8.0
+      },
+      {
+        "company": "Tidewater Mechanical",
+        "trade": "hvac",
+        "headcount": 6,
+        "hours": 8.0
+      },
+      {
+        "company": "Clearwater Plumbing Co.",
+        "trade": "plumbing",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Redline Fire Protection",
+        "trade": "fire_sprinkler",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Summit Roofing & Sheet Metal",
+        "trade": "roofing",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Glassline Curtainwall",
+        "trade": "curtain_wall",
+        "headcount": 6,
+        "hours": 8.0
+      },
+      {
+        "company": "Gravel & Grade Sitework",
+        "trade": "sitework",
+        "headcount": 3,
+        "hours": 8.0
+      }
+    ],
+    "work_completed": [
+      {
+        "area": "L1 east",
+        "trade": "laborers",
+        "description": "Swept and cleaned all floors, loaded dumpster"
+      },
+      {
+        "area": "East elevation",
+        "trade": "curtain_wall",
+        "description": "Set curtain wall units"
+      },
+      {
+        "area": "L3 west",
+        "trade": "plumbing",
+        "description": "Ran domestic water branches"
+      },
+      {
+        "area": "L1 east",
+        "trade": "drywall",
+        "description": "Taped and first coat on hung walls"
+      }
+    ],
+    "delays": [
+      {
+        "cause": "equipment",
+        "hours": 1.5,
+        "description": "Scissor lift dead battery; elec lost time on L2",
+        "rfi_no": null
+      }
+    ],
+    "safety_events": [],
+    "inspections": [],
+    "deliveries": [],
+    "visitors": [],
+    "notes": ""
+  }
+}

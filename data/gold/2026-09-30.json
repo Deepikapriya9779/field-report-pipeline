@@ -1,0 +1,117 @@
+{
+  "source_file": "Daily - Harbor Pt MOB - 9-30.eml",
+  "report": {
+    "project": "Harbor Point Medical Office Building",
+    "report_date": "2026-09-30",
+    "superintendent": "Marcus Reyes",
+    "weather": {
+      "conditions": "Hot and humid",
+      "temp_high_f": 82,
+      "temp_low_f": 70,
+      "weather_delay_hours": 0.0
+    },
+    "manpower": [
+      {
+        "company": "Bayline Builders (self-perform)",
+        "trade": "laborers",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Keystone Interiors LLC",
+        "trade": "drywall",
+        "headcount": 13,
+        "hours": 10.0
+      },
+      {
+        "company": "Volt Line Electric, Inc.",
+        "trade": "electrical",
+        "headcount": 8,
+        "hours": 6.0
+      },
+      {
+        "company": "Tidewater Mechanical",
+        "trade": "hvac",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Clearwater Plumbing Co.",
+        "trade": "plumbing",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Redline Fire Protection",
+        "trade": "fire_sprinkler",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Summit Roofing & Sheet Metal",
+        "trade": "roofing",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Glassline Curtainwall",
+        "trade": "curtain_wall",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Gravel & Grade Sitework",
+        "trade": "sitework",
+        "headcount": 3,
+        "hours": 8.0
+      }
+    ],
+    "work_completed": [
+      {
+        "area": "L1 east",
+        "trade": "fire_sprinkler",
+        "description": "Dropped sprinkler heads to ceiling height"
+      },
+      {
+        "area": "L1 west",
+        "trade": "laborers",
+        "description": "Moved board stock to work areas"
+      },
+      {
+        "area": "L1 east",
+        "trade": "hvac",
+        "description": "Insulated supply duct"
+      },
+      {
+        "area": "L3 east",
+        "trade": "drywall",
+        "description": "Taped and first coat on hung walls"
+      },
+      {
+        "area": "L1 west",
+        "trade": "electrical",
+        "description": "Pulled wire for lighting circuits"
+      }
+    ],
+    "delays": [
+      {
+        "cause": "labor",
+        "hours": 2.5,
+        "description": "Volt Line pulled their crew to another job at 1 PM; L2 wire pull stopped",
+        "rfi_no": null
+      }
+    ],
+    "safety_events": [],
+    "inspections": [
+      {
+        "type": "Above-ceiling L1 west",
+        "inspector_agency": "City of Harbor Point Building Dept",
+        "result": "pass",
+        "notes": ""
+      }
+    ],
+    "deliveries": [],
+    "visitors": [],
+    "notes": ""
+  }
+}

@@ -1,0 +1,58 @@
+# Project roster: the GC always knows its own project, supers and subs.
+# Both extractors use this to turn "elec 6 guys" into Volt Line Electric, Inc. / electrical.
+# Everything here is fictional.
+
+project:
+  name: Harbor Point Medical Office Building
+  number: "2417"
+  aliases: [harbor point mob, harbor pt mob, hp mob, harbor point, harbor pt, harbor point medical office building]
+
+general_contractor: Bayline Builders
+
+superintendents:
+  - name: Dana Okafor
+    aliases: [dana, d okafor, okafor]
+  - name: Marcus Reyes
+    aliases: [marcus, m reyes, reyes, marcus r, mr]
+
+# canonical trade -> words supers actually use
+trades:
+  laborers: [labor, laborer, general labor, gc labor]
+  drywall: [framing, framers, tapers, metal framing, drywall framing, drywall and framing]
+  electrical: [elec, electric, electricians, sparkies]
+  hvac: [mech, mechanical, sheet metal, hvac mechanical]
+  plumbing: [plumb, plumbers]
+  fire_sprinkler: [sprinkler, sprinklers, fire protection, fire sprinkler, fp]
+  roofing: [roofers, roof]
+  curtain_wall: [glazing, glaziers, curtainwall, storefront]
+  sitework: [site, earthwork, civil]
+
+# One sub per trade on this job, so a bare trade word ("elec") identifies the company.
+subs:
+  - company: Bayline Builders (self-perform)
+    trade: laborers
+    aliases: [bayline, bayline builders, bayline labor, gc labor, self perform]
+  - company: Keystone Interiors LLC
+    trade: drywall
+    aliases: [keystone, keystone interiors, keystone drywall]
+  - company: Volt Line Electric, Inc.
+    trade: electrical
+    aliases: [volt line, voltline, volt line electric, volt line elec]
+  - company: Tidewater Mechanical
+    trade: hvac
+    aliases: [tidewater, tidewater mech]
+  - company: Clearwater Plumbing Co.
+    trade: plumbing
+    aliases: [clearwater, clearwater plumb, clearwater plumbing]
+  - company: Redline Fire Protection
+    trade: fire_sprinkler
+    aliases: [redline, redline sprinkler, redline fp]
+  - company: Summit Roofing & Sheet Metal
+    trade: roofing
+    aliases: [summit, summit roofing, summit roofers]
+  - company: Glassline Curtainwall
+    trade: curtain_wall
+    aliases: [glassline, glassline glazing]
+  - company: Gravel & Grade Sitework
+    trade: sitework
+    aliases: [gravel and grade, g and g, g and g site, gravel and grade site]

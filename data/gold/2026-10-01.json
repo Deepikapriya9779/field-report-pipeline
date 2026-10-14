@@ -1,0 +1,111 @@
+{
+  "source_file": "daily notes 10-1.pdf",
+  "report": {
+    "project": "Harbor Point Medical Office Building",
+    "report_date": "2026-10-01",
+    "superintendent": "Marcus Reyes",
+    "weather": {
+      "conditions": "Clear",
+      "temp_high_f": 80,
+      "temp_low_f": 68,
+      "weather_delay_hours": 0.0
+    },
+    "manpower": [
+      {
+        "company": "Bayline Builders (self-perform)",
+        "trade": "laborers",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Keystone Interiors LLC",
+        "trade": "drywall",
+        "headcount": 13,
+        "hours": 10.0
+      },
+      {
+        "company": "Volt Line Electric, Inc.",
+        "trade": "electrical",
+        "headcount": 8,
+        "hours": 8.0
+      },
+      {
+        "company": "Tidewater Mechanical",
+        "trade": "hvac",
+        "headcount": 6,
+        "hours": 8.0
+      },
+      {
+        "company": "Clearwater Plumbing Co.",
+        "trade": "plumbing",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Redline Fire Protection",
+        "trade": "fire_sprinkler",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Summit Roofing & Sheet Metal",
+        "trade": "roofing",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Glassline Curtainwall",
+        "trade": "curtain_wall",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Gravel & Grade Sitework",
+        "trade": "sitework",
+        "headcount": 3,
+        "hours": 8.0
+      }
+    ],
+    "work_completed": [
+      {
+        "area": "Main roof",
+        "trade": "roofing",
+        "description": "Installed edge metal and coping"
+      },
+      {
+        "area": "L2 east",
+        "trade": "fire_sprinkler",
+        "description": "Installed branch lines and hangers"
+      },
+      {
+        "area": "L2 east",
+        "trade": "hvac",
+        "description": "Insulated supply duct"
+      },
+      {
+        "area": "L3 west",
+        "trade": "plumbing",
+        "description": "Ran domestic water branches"
+      }
+    ],
+    "delays": [
+      {
+        "cause": "material",
+        "hours": 1.0,
+        "description": "6 door frames delivered wrong hand; framers re-sequenced",
+        "rfi_no": null
+      }
+    ],
+    "safety_events": [],
+    "inspections": [],
+    "deliveries": [
+      {
+        "supplier": "Doorway Hardware Co.",
+        "material": "Hollow metal door frames, L1-L2 (24)",
+        "notes": "6 frames wrong hand, sent back"
+      }
+    ],
+    "visitors": [],
+    "notes": ""
+  }
+}

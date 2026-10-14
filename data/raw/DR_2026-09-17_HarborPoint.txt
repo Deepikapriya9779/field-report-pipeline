@@ -1,0 +1,51 @@
+BAYLINE BUILDERS - SUPERINTENDENT DAILY REPORT
+Form DR-1 rev 3
+================================================================
+Project:          Harbor Point Medical Office Building
+Job No.:          2417
+Report Date:      2026-09-17
+Superintendent:   Dana Okafor
+Report No.:       13
+
+WEATHER
+Conditions:       Hot and humid
+High / Low (F):   83 / 71
+Weather Delay (hrs): 0
+
+MANPOWER
+Company                         | Trade          | Headcount | Hours
+----------------------------------------------------------------
+Bayline Builders (self-perform) | laborers       | 3         | 8
+Keystone Interiors LLC          | drywall        | 10        | 8
+Volt Line Electric, Inc.        | electrical     | 8         | 8
+Tidewater Mechanical            | hvac           | 6         | 8
+Clearwater Plumbing Co.         | plumbing       | 5         | 8
+Redline Fire Protection         | fire_sprinkler | 5         | 8
+Summit Roofing & Sheet Metal    | roofing        | 7         | 8
+Glassline Curtainwall           | curtain_wall   | 6         | 8
+TOTAL                           |                | 50        |
+
+WORK COMPLETED
+- [L1 east] (plumbing) Set carriers for wall-hung fixtures
+- [L3 west] (fire_sprinkler) Installed sprinkler main
+- [L1 west] (hvac) Hung main supply duct
+- [L3 west] (drywall) Installed top track and in-wall blocking
+- [Main roof] (roofing) Installed membrane on main roof
+
+DELAYS
+- material | 4 hrs | Curtain wall anchors short-shipped; glaziers moved to staging
+
+SAFETY
+- observation | Two workers without safety glasses at L3; corrected on the spot
+
+INSPECTIONS
+- None
+
+DELIVERIES
+- None
+
+VISITORS
+- None
+
+NOTES
+None

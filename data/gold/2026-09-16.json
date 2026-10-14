@@ -1,0 +1,101 @@
+{
+  "source_file": "DR_2026-09-16_HarborPoint.txt",
+  "report": {
+    "project": "Harbor Point Medical Office Building",
+    "report_date": "2026-09-16",
+    "superintendent": "Dana Okafor",
+    "weather": {
+      "conditions": "Hot and humid",
+      "temp_high_f": 87,
+      "temp_low_f": 72,
+      "weather_delay_hours": 0.0
+    },
+    "manpower": [
+      {
+        "company": "Bayline Builders (self-perform)",
+        "trade": "laborers",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Keystone Interiors LLC",
+        "trade": "drywall",
+        "headcount": 11,
+        "hours": 8.0
+      },
+      {
+        "company": "Volt Line Electric, Inc.",
+        "trade": "electrical",
+        "headcount": 7,
+        "hours": 8.0
+      },
+      {
+        "company": "Tidewater Mechanical",
+        "trade": "hvac",
+        "headcount": 6,
+        "hours": 8.0
+      },
+      {
+        "company": "Clearwater Plumbing Co.",
+        "trade": "plumbing",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Redline Fire Protection",
+        "trade": "fire_sprinkler",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Summit Roofing & Sheet Metal",
+        "trade": "roofing",
+        "headcount": 7,
+        "hours": 8.0
+      },
+      {
+        "company": "Glassline Curtainwall",
+        "trade": "curtain_wall",
+        "headcount": 6,
+        "hours": 8.0
+      }
+    ],
+    "work_completed": [
+      {
+        "area": "L2 east",
+        "trade": "laborers",
+        "description": "Set up temporary protection at stair 1"
+      },
+      {
+        "area": "South elevation",
+        "trade": "curtain_wall",
+        "description": "Set curtain wall anchors"
+      },
+      {
+        "area": "Main roof",
+        "trade": "roofing",
+        "description": "Flashed RTU curbs"
+      }
+    ],
+    "delays": [
+      {
+        "cause": "rfi",
+        "hours": 3.0,
+        "description": "Ceiling height conflict at L2 corridor, duct vs sprinkler main",
+        "rfi_no": 11
+      }
+    ],
+    "safety_events": [],
+    "inspections": [
+      {
+        "type": "Framing L2",
+        "inspector_agency": "City of Harbor Point Building Dept",
+        "result": "partial",
+        "notes": "L2 west approved; L2 east needs blocking at grab bar locations"
+      }
+    ],
+    "deliveries": [],
+    "visitors": [],
+    "notes": ""
+  }
+}

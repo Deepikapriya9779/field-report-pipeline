@@ -1,0 +1,51 @@
+BAYLINE BUILDERS - SUPERINTENDENT DAILY REPORT
+Form DR-1 rev 3
+================================================================
+Project:          Harbor Point Medical Office Building
+Job No.:          2417
+Report Date:      2026-10-06
+Superintendent:   Dana Okafor
+Report No.:       27
+
+WEATHER
+Conditions:       Partly cloudy
+High / Low (F):   81 / 68
+Weather Delay (hrs): 0
+
+MANPOWER
+Company                         | Trade          | Headcount | Hours
+----------------------------------------------------------------
+Bayline Builders (self-perform) | laborers       | 3         | 8
+Keystone Interiors LLC          | drywall        | 13        | 10
+Volt Line Electric, Inc.        | electrical     | 8         | 8
+Tidewater Mechanical            | hvac           | 6         | 8
+Clearwater Plumbing Co.         | plumbing       | 3         | 8
+Redline Fire Protection         | fire_sprinkler | 2         | 8
+Glassline Curtainwall           | curtain_wall   | 5         | 8
+Gravel & Grade Sitework         | sitework       | 3         | 8
+TOTAL                           |                | 43        |
+
+WORK COMPLETED
+- [L3 east] (electrical) Terminated devices in exam rooms
+- [L2 east] (hvac) Hung branch duct and flex to diffusers
+- [North elevation] (curtain_wall) Glazed and sealed vision panels
+- [East parking lot] (sitework) Prepped subgrade for curb and gutter
+- [L1 west] (fire_sprinkler) Installed branch lines and hangers
+
+DELAYS
+- None
+
+SAFETY
+- None
+
+INSPECTIONS
+- None
+
+DELIVERIES
+- Coastal Gypsum Supply | 5/8 in. Type X gypsum board, 10 bunks
+
+VISITORS
+- None
+
+NOTES
+None

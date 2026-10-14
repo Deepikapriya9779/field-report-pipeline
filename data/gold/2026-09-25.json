@@ -1,0 +1,115 @@
+{
+  "source_file": "daily 9-25.txt",
+  "report": {
+    "project": "Harbor Point Medical Office Building",
+    "report_date": "2026-09-25",
+    "superintendent": "Marcus Reyes",
+    "weather": {
+      "conditions": "Sunny",
+      "temp_high_f": 79,
+      "temp_low_f": 67,
+      "weather_delay_hours": 0.0
+    },
+    "manpower": [
+      {
+        "company": "Bayline Builders (self-perform)",
+        "trade": "laborers",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Keystone Interiors LLC",
+        "trade": "drywall",
+        "headcount": 9,
+        "hours": 8.0
+      },
+      {
+        "company": "Volt Line Electric, Inc.",
+        "trade": "electrical",
+        "headcount": 8,
+        "hours": 8.0
+      },
+      {
+        "company": "Tidewater Mechanical",
+        "trade": "hvac",
+        "headcount": 6,
+        "hours": 8.0
+      },
+      {
+        "company": "Clearwater Plumbing Co.",
+        "trade": "plumbing",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Redline Fire Protection",
+        "trade": "fire_sprinkler",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Summit Roofing & Sheet Metal",
+        "trade": "roofing",
+        "headcount": 6,
+        "hours": 8.0
+      },
+      {
+        "company": "Glassline Curtainwall",
+        "trade": "curtain_wall",
+        "headcount": 5,
+        "hours": 6.0
+      }
+    ],
+    "work_completed": [
+      {
+        "area": "L1 west",
+        "trade": "drywall",
+        "description": "Hung 5/8 board on corridor walls"
+      },
+      {
+        "area": "L3 east",
+        "trade": "plumbing",
+        "description": "Pressure tested domestic water"
+      },
+      {
+        "area": "Main roof",
+        "trade": "roofing",
+        "description": "Installed edge metal and coping"
+      },
+      {
+        "area": "L1 east",
+        "trade": "laborers",
+        "description": "Swept and cleaned all floors, loaded dumpster"
+      },
+      {
+        "area": "L2 east",
+        "trade": "electrical",
+        "description": "Pulled wire for lighting circuits"
+      }
+    ],
+    "delays": [
+      {
+        "cause": "rfi",
+        "hours": 2.0,
+        "description": "Waiting on RFI 14 response, sprinkler head layout at L3 lobby ceiling",
+        "rfi_no": 14
+      }
+    ],
+    "safety_events": [
+      {
+        "type": "observation",
+        "description": "Ladder missing a foot found on L2; tagged out and removed"
+      }
+    ],
+    "inspections": [],
+    "deliveries": [
+      {
+        "supplier": "Coastal Gypsum Supply",
+        "material": "5/8 in. Type X gypsum board, 8 bunks",
+        "notes": ""
+      }
+    ],
+    "visitors": [],
+    "notes": ""
+  }
+}

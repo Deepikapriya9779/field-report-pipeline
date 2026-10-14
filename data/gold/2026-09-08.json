@@ -1,0 +1,116 @@
+{
+  "source_file": "DR_2026-09-08_HarborPoint.pdf",
+  "report": {
+    "project": "Harbor Point Medical Office Building",
+    "report_date": "2026-09-08",
+    "superintendent": "Dana Okafor",
+    "weather": {
+      "conditions": "Partly cloudy",
+      "temp_high_f": 86,
+      "temp_low_f": 74,
+      "weather_delay_hours": 0.0
+    },
+    "manpower": [
+      {
+        "company": "Bayline Builders (self-perform)",
+        "trade": "laborers",
+        "headcount": 3,
+        "hours": 8.0
+      },
+      {
+        "company": "Keystone Interiors LLC",
+        "trade": "drywall",
+        "headcount": 8,
+        "hours": 8.0
+      },
+      {
+        "company": "Volt Line Electric, Inc.",
+        "trade": "electrical",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Tidewater Mechanical",
+        "trade": "hvac",
+        "headcount": 6,
+        "hours": 8.0
+      },
+      {
+        "company": "Clearwater Plumbing Co.",
+        "trade": "plumbing",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Redline Fire Protection",
+        "trade": "fire_sprinkler",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Summit Roofing & Sheet Metal",
+        "trade": "roofing",
+        "headcount": 5,
+        "hours": 8.0
+      },
+      {
+        "company": "Glassline Curtainwall",
+        "trade": "curtain_wall",
+        "headcount": 4,
+        "hours": 8.0
+      },
+      {
+        "company": "Gravel & Grade Sitework",
+        "trade": "sitework",
+        "headcount": 4,
+        "hours": 8.0
+      }
+    ],
+    "work_completed": [
+      {
+        "area": "L2 west",
+        "trade": "plumbing",
+        "description": "Roughed in restroom core waste and vent"
+      },
+      {
+        "area": "East parking lot",
+        "trade": "sitework",
+        "description": "Graded east parking area"
+      },
+      {
+        "area": "L2 west",
+        "trade": "fire_sprinkler",
+        "description": "Ran branch lines"
+      },
+      {
+        "area": "South elevation",
+        "trade": "curtain_wall",
+        "description": "Set curtain wall anchors"
+      },
+      {
+        "area": "L3 east",
+        "trade": "laborers",
+        "description": "Cleaned L1 and L2, loaded dumpster"
+      }
+    ],
+    "delays": [],
+    "safety_events": [],
+    "inspections": [
+      {
+        "type": "In-wall rough-in L1",
+        "inspector_agency": "City of Harbor Point Building Dept",
+        "result": "pass",
+        "notes": "OK to close L1 walls"
+      }
+    ],
+    "deliveries": [
+      {
+        "supplier": "Northwind HVAC Equipment",
+        "material": "RTU-1 and RTU-2 rooftop units",
+        "notes": "Set by crane 6:30-9:30 AM"
+      }
+    ],
+    "visitors": [],
+    "notes": "RTU pick went well; crane off site by 10."
+  }
+}
