@@ -217,6 +217,9 @@ def eval_cmd(
         bool, typer.Option("--record", help="Call the API for requests not yet recorded.")
     ] = False,
     out: Annotated[Path, typer.Option("--out")] = Path("eval/results.md"),
+    methods: Annotated[
+        str, typer.Option("--methods", help="Comma-separated: rules, llm, pipeline.")
+    ] = "rules,llm,pipeline",
     roster_path: Annotated[Path, typer.Option("--roster")] = DEFAULT_ROSTER,
 ) -> None:
     """Score rules, LLM and pipeline extraction against the gold reports.
@@ -232,10 +235,13 @@ def eval_cmd(
     except ValueError as exc:
         raise typer.BadParameter(str(exc)) from exc
 
+    chosen = tuple(m.strip() for m in methods.split(",") if m.strip())
+    if not chosen or set(chosen) - {"rules", "llm", "pipeline"}:
+        raise typer.BadParameter("use rules, llm and/or pipeline", param_hint="--methods")
     roster = Roster.load(roster_path)
     extractor = llm.build_extractor(roster, mode)
     try:
-        run = evaluate(extractor, roster)
+        run = evaluate(extractor, roster, chosen)
     except llm.FixtureError as exc:
         console.print(f"[red]Stopped:[/] {exc} For the eval: fieldreports eval --record")
         raise typer.Exit(1) from exc

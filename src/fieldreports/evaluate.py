@@ -321,9 +321,18 @@ def render_results(ev: EvalRun) -> str:
     lines += [
         "",
         "Rules return nothing for free-form reports by design (they only read the template), "
-        "so their free-form row is 0. The pipeline row is what `ingest` actually does.",
+        "so their free-form row is 0. The pipeline routes template reports to the rules and "
+        "everything else to the LLM, so its free-form row is the LLM's own score; the pipeline "
+        "rows are what `ingest` actually does.",
         "",
     ]
+    if "llm" not in ev.scores:
+        lines += [
+            "Not run here: the LLM on the template reports as well (the rules-vs-LLM comparison "
+            "on identical inputs). It needs those responses recorded first: "
+            "`fieldreports eval --record`.",
+            "",
+        ]
 
     main = "pipeline" if "pipeline" in ev.scores else next(iter(ev.scores))
     lines += [

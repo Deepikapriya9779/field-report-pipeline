@@ -86,7 +86,7 @@ def template_narrative(f: dict) -> str:
             f"{len(failed)} of {len(f['inspections'])} inspections did not pass: {detail}."
         )
     elif f["inspections"]:
-        parts.append(f"All {len(f['inspections'])} inspections passed.")
+        parts.append(f"{len(f['inspections'])} of {len(f['inspections'])} inspections passed.")
     if f["safety_events"]:
         types = ", ".join(s["type"].replace("_", " ") for s in f["safety_events"])
         parts.append(f"Safety events: {types}.")

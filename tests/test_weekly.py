@@ -102,6 +102,14 @@ def test_template_narrative_states_the_key_numbers(conn):
     assert "2 weekday(s)" in text
 
 
+def test_all_passed_wording(conn):
+    from fieldreports.weekly import template_narrative as t
+
+    f = gather(conn, WEEK, PROJECT)
+    f["inspections"] = [{**f["inspections"][0], "result": "pass"}] * 2
+    assert "2 of 2 inspections passed." in t(f)
+
+
 def test_narrative_with_an_invented_number_is_rejected(conn):
     facts = gather(conn, WEEK, PROJECT)
     assert narrative_problem("Crews logged 276 man-hours; RFI 14 cost 2 hours.", facts) is None

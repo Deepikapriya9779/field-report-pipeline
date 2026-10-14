@@ -1,0 +1,9 @@
+# Exact versions for the libraries that shape a recorded request.
+# The LLM fixture key is a hash of the full request: the tool schema comes from pydantic and
+# the report text from pdfplumber/pdfminer. An upgrade to either can change the bytes, so mock
+# replay would (correctly) report missing fixtures. CI installs with: pip install -c constraints.txt
+pydantic==2.14.1
+pydantic_core==2.50.1
+pdfplumber==0.11.10
+pdfminer.six==20260107
+ruff==0.17.0
